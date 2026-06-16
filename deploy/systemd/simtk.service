@@ -1,0 +1,18 @@
+[Unit]
+Description=SimTk Node app
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/SimTk
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=simtk
+
+[Install]
+WantedBy=multi-user.target

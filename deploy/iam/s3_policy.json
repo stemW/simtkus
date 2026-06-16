@@ -1,0 +1,57 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::748286202559:root"
+      },
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:ListBucket",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::simtkus.com",
+        "arn:aws:s3:::simtkus.com/*"
+      ]
+    },
+    {
+      "Sid": "AllowSimtkListBucket",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::748286202559:user/simtk"
+      },
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::stemtk"
+    },
+    {
+      "Sid": "AllowSimtkObjectAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::748286202559:user/simtk"
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::stemtk/*"
+    },
+    {
+      "Sid": "AllowGetObjectFromLocalhostOnly",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::stemtk/*",
+      "Condition": {
+        "IpAddress": {
+          "aws:SourceIp": [
+            "127.0.0.1/32",
+            "24.127.20.36/32"
+          ]
+        }
+      }
+    }
+  ]
+}

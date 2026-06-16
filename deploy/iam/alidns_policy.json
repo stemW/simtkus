@@ -1,0 +1,15 @@
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Action": [
+        "alidns:DescribeDomainRecords",
+        "alidns:AddDomainRecord",
+        "alidns:UpdateDomainRecord",
+        "alidns:DeleteDomainRecord"
+      ],
+      "Resource": ["*"],
+      "Effect": "Allow"
+    }
+  ]
+}

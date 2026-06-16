@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - SimTk</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 28px; }
+    .logout-btn {
+      background: #ff6b6b;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .logout-btn:hover { background: #ff5252; }
+    .container {
+      max-width: 1400px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+    .tab-btn {
+      background: white;
+      border: 2px solid transparent;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: 0.3s;
+      color: #666;
+    }
+    .tab-btn.active {
+      border-bottom: 3px solid #667eea;
+      color: #667eea;
+    }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s;
+    }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .card h2 { font-size: 20px; margin-bottom: 20px; color: #333; }
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .user-table thead {
+      background: #f8f9fa;
+      border-bottom: 2px solid #ddd;
+    }
+    .user-table th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #555;
+    }
+    .user-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .user-table tr:hover {
+      background: #f8f9fa;
+    }
+    .role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .role-admin { background: #e7d4f5; color: #667eea; }
+    .role-teacher { background: #d4f4e7; color: #06b6d4; }
+    .role-student { background: #fef3c7; color: #d97706; }
+    .action-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: 0.3s;
+      margin-right: 5px;
+    }
+    .edit-btn { background: #06b6d4; color: white; }
+    .edit-btn:hover { background: #0891b2; }
+    .delete-btn { background: #ff6b6b; color: white; }
+    .delete-btn:hover { background: #ff5252; }
+    .save-btn { background: #22c55e; color: white; }
+    .save-btn:hover { background: #16a34a; }
+    .cancel-btn { background: #999; color: white; }
+    .cancel-btn:hover { background: #777; }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .modal-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #667eea;
+      margin: 10px 0;
+    }
+    .stat-label {
+      color: #999;
+      font-size: 14px;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+    }
+    .error {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .success {
+      background: #efe;
+      color: #3c3;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <h1>🔐 Admin Dashboard</h1>
+      <div id="admin-identity" style="font-size:14px;opacity:0.85;margin-top:4px">Verifying admin session…</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="/" style="background:#fff;color:#667eea;padding:8px 12px;border-radius:6px;text-decoration:none;font-weight:600">← Home</a>
+      <button class="logout-btn" onclick="adminLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('users')">Users Management</button>
+      <button class="tab-btn" onclick="switchTab('admins')">Admin Activity</button>
+      <button class="tab-btn" onclick="switchTab('audit')">Audit Log</button>
+    </div>
+
+    <!-- Users Management Tab -->
+    <div id="users" class="tab-content active">
+      <div class="card">
+        <h2>User Management</h2>
+        <div id="users-msg"></div>
+          <div id="teacher-requests" style="margin-bottom:16px"></div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="totalUsers">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Teachers</div>
+            <div class="stat-value" id="totalTeachers">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Students</div>
+            <div class="stat-value" id="totalStudents">-</div>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Request</th>
+                <th>Logins</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-list">
+              <tr><td colspan="6" class="loading">Loading users...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Activity Tab -->
+    <div id="admins" class="tab-content">
+      <div class="card">
+        <h2>Admin Activity Log</h2>
+        <div style="overflow-x: auto;">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Level</th>
+                <th>Logins</th>
+                <th>Last Login</th>
+              </tr>
+            </thead>
+            <tbody id="admins-list">
+              <tr><td colspan="5" class="loading">Loading admins...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit Log Tab -->
+    <div id="audit" class="tab-content">
+      <div class="card">
+        <h2>Audit Log</h2>
+        <div id="audit-list" style="max-height: 500px; overflow-y: auto;">
+          <p class="loading">Loading audit log...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Edit User</div>
+      <form id="editForm">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="editName" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="editEmail" readonly>
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="editRole">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="editNotes" placeholder="Add notes about this user..."></textarea>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" class="save-btn">Save Changes</button>
+          <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentEditEmail = null;
+    let auditLog = [];
+    let adminSessionVerified = false;
+    const FETCH_TIMEOUT = 5000; // 5 second timeout
+        async function verifyAdminSession() {
+          const identity = document.getElementById('admin-identity');
+          try {
+            const res = await fetch('/admin/status', { credentials: 'include' });
+            if (!res.ok) throw new Error('status_failed');
+            const data = await res.json();
+            if (!data.isAdmin) {
+              adminSessionVerified = false;
+              if (identity) identity.textContent = 'Admin session missing — redirecting…';
+              document.getElementById('users-msg').innerHTML = '<div class="error">Admin session not found. Redirecting to login…</div>';
+              setTimeout(() => window.location.href = '/admin_login.html', 1800);
+              return false;
+            }
+            adminSessionVerified = true;
+            if (identity) {
+              const level = (data.level || '').toUpperCase();
+              identity.textContent = `${data.name || data.email} • ${level || 'ADMIN'} • ${data.email}`;
+            }
+            return true;
+          } catch (e) {
+            adminSessionVerified = false;
+            if (identity) identity.textContent = 'Unable to verify admin session';
+            document.getElementById('users-msg').innerHTML = '<div class="error">Cannot verify admin session. Please <a href="/admin_login.html">log in</a>.</div>';
+            return false;
+          }
+        }
+
+    
+    // Add timeout to fetch requests
+    async function fetchWithTimeout(url, options = {}, timeout = FETCH_TIMEOUT) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      
+      try {
+        const response = await fetch(url, { credentials: 'include', ...options, signal: controller.signal });
+        clearTimeout(timeoutId);
+        return response;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        throw error;
+      }
+    }
+
+    async function loadUsers() {
+      const loadingMsg = document.getElementById('users-msg');
+      const tbody = document.getElementById('users-list');
+      
+      try {
+        // Show loading state
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading users (max 20 seconds)...</td></tr>';
+        if (loadingMsg) loadingMsg.innerHTML = '';
+        
+        console.log('Loading users from /admin/users endpoint...');
+        console.log('File location: data/users.csv (local) or Google Drive (primary)');
+        
+        const res = await fetchWithTimeout('/admin/users', { method: 'GET' }, 20000);
+        
+        if (res.status === 401) {
+          console.warn('Session expired or not authenticated');
+          loadingMsg.innerHTML = '<div class="error">Session expired or not authenticated. <a href="/admin_login.html">Log in as admin</a></div>';
+          tbody.innerHTML = '<tr><td colspan="6" class="error">Admin authentication required. Please <a href="/admin_login.html">log in</a>.</td></tr>';
+          return;
+        }
+        
+        if (!res.ok) {
+          console.error('Failed to load users:', res.status, res.statusText);
+          const errorMsg = `
+            <div class="error">
+              <strong>Failed to load users (HTTP ${res.status})</strong><br>
+              File: <code>data/users.csv</code><br>
+              Location: <code>c:\\Users\\moham\\Desktop\\SimTk\\SimTk\\data\\users.csv</code><br>
+              Server: <code>/admin/users</code> endpoint<br>
+              Status: ${res.statusText}
+            </div>
+          `;
+          loadingMsg.innerHTML = errorMsg;
+          tbody.innerHTML = '<tr><td colspan="6" class="error">Error loading users - see message above</td></tr>';
+          return;
+        }
+        
+        console.log('Parsing user data...');
+        const data = await res.json();
+        console.log('User data received, total users:', data.users?.length || 0);
+        console.log('Data source:', data.dataSource || 'Unknown');
+        
+        // Fetch permissions with timeout
+        let userPermissions = { permissions: [] };
+        try {
+          const permRes = await fetchWithTimeout('/admin/user-permissions', { method: 'GET' }, 5000);
+            if (permRes.status === 401) {
+              console.warn('Permissions endpoint requires admin auth');
+            } else if (permRes.ok) {
+              userPermissions = await permRes.json();
+              console.log('Permissions loaded:', userPermissions.permissions.length);
+            }
+        } catch (e) {
+          console.warn('Failed to load permissions from data/user_permissions.csv:', e.message);
+        }
+
+        // Fetch pending teacher requests (primary) and fallback to interests.txt if empty
+        let teacherRequests = [];
+        try {
+          const reqRes = await fetchWithTimeout('/admin/teacher-requests', { method: 'GET' }, 5000);
+          if (reqRes.status === 401) {
+            console.warn('Teacher requests endpoint requires admin auth');
+          } else if (reqRes.ok) {
+            const reqData = await reqRes.json();
+            teacherRequests = reqData.requests || [];
+            console.log('Teacher requests loaded:', teacherRequests.length);
+          }
+        } catch (e) {
+          console.warn('Failed to load teacher requests:', e.message);
+        }
+
+        // Fallback: parse /interests.txt (legacy or when JSON file missing)
+        if (!teacherRequests || teacherRequests.length === 0) {
+          try {
+            const txtRes = await fetchWithTimeout('/interests.txt', { method: 'GET' }, 5000);
+            if (txtRes.ok) {
+              const txt = await txtRes.text();
+              const lines = txt.split('\n');
+              const emails = new Set();
+              lines.forEach(line => {
+                // look for Role: teacher or | Role: teacher
+                if (/Role:\s*teacher/i.test(line) || /role:\s*teacher/i.test(line)) {
+                  const m = line.match(/Email:\s*([^|]+)/i) || line.match(/email:\s*([^|]+)/i);
+                  if (m && m[1]) emails.add(m[1].trim());
+                }
+              });
+              // Convert to request-like objects
+              teacherRequests = Array.from(emails).map(e => ({ email: e, name: '' }));
+              console.log('Fallback teacher requests from interests.txt:', teacherRequests.length);
+            }
+          } catch (e) {
+            console.warn('Failed to load fallback interests.txt:', e.message);
+          }
+        }
+        
+        tbody.innerHTML = '';
+        
+        // Show data source information
+        const sourceDisplay = data.dataSource ? 
+          `<div style="color: #666; font-size: 13px; margin-bottom: 10px;">Data Source: <strong>${data.dataSource}</strong> (simtk_management file)</div>` : 
+          '';
+        if (loadingMsg) loadingMsg.innerHTML = sourceDisplay;
+        
+        let teachers = 0, students = 0;
+        
+        if (!data.users || data.users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="loading">No users found in database</td></tr>';
+          document.getElementById('totalUsers').textContent = '0';
+          document.getElementById('totalTeachers').textContent = '0';
+          document.getElementById('totalStudents').textContent = '0';
+          console.log('No users in database. File: data/users.csv');
+          loadingMsg.innerHTML = '<div style="color: #666;">No users yet. Users will appear here after they log in.</div>';
+          return;
+        }
+        
+        console.log('Building user table with', data.users.length, 'users...');
+        data.users.forEach(user => {
+          const perm = userPermissions.permissions.find(p => p.email === user.email) || { role: 'student', notes: '' };
+          const hasRequest = user.requested === true || teacherRequests.some(r => String(r.email || '').toLowerCase() === String(user.email || '').toLowerCase());
+          if (perm.role === 'teacher') teachers++;
+          if (perm.role === 'student') students++;
+          
+          const lastLogin = user.last_login ? new Date(user.last_login).toLocaleString() : 'Never';
+          const roleColor = perm.role === 'teacher' ? 'role-teacher' : 'role-student';
+          
+          tbody.innerHTML += `
+            <tr>
+              <td>${user.name}</td>
+              <td>${user.email}</td>
+              <td><span class="role-badge ${roleColor}">${perm.role.toUpperCase()}</span></td>
+              <td>${hasRequest ? '<span class="role-badge" style="background:#fff4e6;color:#d97706">REQUESTED</span>' : ''}</td>
+              <td>${user.login_count}</td>
+              <td>${lastLogin}</td>
+              <td>
+                <button class="action-btn edit-btn" onclick="editUser('${user.email}', '${user.name}', '${perm.role}', '${perm.notes || ''}')">Edit</button>
+                ${hasRequest ? `<button class="action-btn save-btn" onclick="approveTeacher('${user.email.replace(/'/g,'\\\'')}', '${(user.name||'').replace(/'/g,'\\\'')}')">Approve</button><button class="action-btn delete-btn" onclick="denyTeacher('${user.email.replace(/'/g,'\\\'')}', '${(user.name||'').replace(/'/g,'\\\'')}')">Deny</button>` : ''}
+                <button class="action-btn delete-btn" onclick="deleteUser('${user.email}')">Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+        
+        document.getElementById('totalUsers').textContent = data.users.length;
+        document.getElementById('totalTeachers').textContent = teachers;
+        document.getElementById('totalStudents').textContent = students;
+        
+        if (loadingMsg) loadingMsg.innerHTML = '';
+        
+      } catch (e) {
+        console.error('Load users error:', e);
+        
+        let errorDetails = `
+          <div class="error">
+            <strong>⚠️ Failed to load users</strong><br>
+            Error: ${e.message}<br>
+            <br>
+            <strong>File Details:</strong><br>
+            Location: <code>c:\\Users\\moham\\Desktop\\SimTk\\SimTk\\data\\users.csv</code><br>
+            Backup: <code>Google Drive (if enabled)</code><br>
+            Endpoint: <code>/admin/users</code><br>
+            Timeout: 20 seconds<br>
+            <br>
+            <em>Check server console for more details.</em>
+          </div>
+        `;
+        
+        if (e.name === 'AbortError') {
+          errorDetails = `
+            <div class="error">
+              <strong>⏱️ Timeout Loading Users (20 seconds exceeded)</strong><br>
+              <br>
+              <strong>File Details:</strong><br>
+              Location: <code>c:\\Users\\moham\\Desktop\\SimTk\\SimTk\\data\\users.csv</code><br>
+              Endpoint: <code>/admin/users</code><br>
+              Status: Server did not respond within 20 seconds<br>
+              <br>
+              Possible causes:<br>
+              • Server is not running<br>
+              • Network connectivity issue<br>
+              • File system error<br>
+              • Google Drive sync hanging<br>
+            </div>
+          `;
+        }
+        
+        if (loadingMsg) loadingMsg.innerHTML = errorDetails;
+        tbody.innerHTML = '<tr><td colspan="6" class="error">Failed to load - see message above</td></tr>';
+      }
+    }
+
+    async function loadAdmins() {
+      try {
+        const res = await fetchWithTimeout('/admin/users', { method: 'GET' }, 8000);
+        if (res.status === 401) {
+          console.warn('Session expired, redirecting...');
+          window.location.href = '/admin_login.html';
+          return;
+        }
+        if (!res.ok) {
+          console.error('Failed to load admins:', res.status);
+          throw new Error('Failed to load admins');
+        }
+        
+        const data = await res.json();
+        const tbody = document.getElementById('admins-list');
+        tbody.innerHTML = '';
+        
+        if (!data.admins || data.admins.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="loading">No admin activity recorded</td></tr>';
+          return;
+        }
+        
+        if (data.admins && data.admins.length > 0) {
+          data.admins.forEach(admin => {
+            const lastLogin = admin.last_login ? new Date(admin.last_login).toLocaleString() : 'Never';
+            tbody.innerHTML += `
+              <tr>
+                <td>${admin.name}</td>
+                <td>${admin.email}</td>
+                <td><span class="role-badge role-admin">ADMIN</span></td>
+                <td>${admin.login_count}</td>
+                <td>${lastLogin}</td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="loading">No admin activity recorded</td></tr>';
+        }
+        
+      } catch (e) {
+        console.error('Load admins error:', e);
+        document.getElementById('admins-list').innerHTML = '<tr><td colspan="5" class="error">Error loading admin data</td></tr>';
+      }
+    }
+
+    function editUser(email, name, role, notes) {
+      currentEditEmail = email;
+      document.getElementById('editName').value = name;
+      document.getElementById('editEmail').value = email;
+      document.getElementById('editRole').value = role;
+      document.getElementById('editNotes').value = notes || '';
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('active');
+      currentEditEmail = null;
+    }
+
+    async function saveUserChanges() {
+      event.preventDefault();
+      
+      const data = {
+        email: currentEditEmail,
+        name: document.getElementById('editName').value,
+        role: document.getElementById('editRole').value,
+        notes: document.getElementById('editNotes').value
+      };
+      
+      try {
+        const res = await fetch('/admin/update-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(data)
+        });
+        
+        if (!res.ok) throw new Error('Failed to update user');
+        
+        addAuditLog(`Updated user ${data.email}: name, role set to ${data.role}`);
+        closeModal();
+        loadUsers();
+        
+        document.getElementById('users-msg').innerHTML = '<div class="success">User updated successfully!</div>';
+        setTimeout(() => { document.getElementById('users-msg').innerHTML = ''; }, 3000);
+        
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function deleteUser(email) {
+      if (!confirm(`Are you sure you want to delete ${email}? This cannot be undone.`)) return;
+      
+      try {
+        const res = await fetch('/admin/delete-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email })
+        });
+        
+        if (!res.ok) throw new Error('Failed to delete user');
+        
+        addAuditLog(`Deleted user ${email}`);
+        loadUsers();
+        
+        document.getElementById('users-msg').innerHTML = '<div class="success">User deleted successfully!</div>';
+        setTimeout(() => { document.getElementById('users-msg').innerHTML = ''; }, 3000);
+        
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    function addAuditLog(action) {
+      const entry = {
+        timestamp: new Date().toISOString(),
+        action: action,
+        admin: 'Current Admin'
+      };
+      auditLog.unshift(entry);
+      updateAuditDisplay();
+    }
+
+    function updateAuditDisplay() {
+      const auditDiv = document.getElementById('audit-list');
+      if (auditLog.length === 0) {
+        auditDiv.innerHTML = '<p class="loading">No audit log entries</p>';
+        return;
+      }
+      
+      auditDiv.innerHTML = auditLog.map(entry => `
+        <div style="padding: 12px; border-bottom: 1px solid #eee; background: #f9f9f9;">
+          <strong>${new Date(entry.timestamp).toLocaleString()}</strong><br>
+          <span style="color: #666;">Admin:</span> ${entry.admin}<br>
+          <span style="color: #666;">Action:</span> ${entry.action}
+        </div>
+      `).join('');
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+      
+      if (!adminSessionVerified) return;
+      if (tabName === 'users') {
+        loadUsers();
+        loadTeacherRequests();
+      }
+      if (tabName === 'admins') loadAdmins();
+    }
+
+    async function loadTeacherRequests() {
+      try {
+        const container = document.getElementById('teacher-requests');
+        container.innerHTML = '<div class="card"><strong>Loading teacher requests...</strong></div>';
+        const res = await fetch('/admin/teacher-requests', { credentials: 'include' });
+        if (!res.ok) {
+          container.innerHTML = '';
+          return;
+        }
+        const data = await res.json();
+        const reqs = data.requests || [];
+        if (reqs.length === 0) {
+          container.innerHTML = '<div class="card">No pending teacher requests.</div>';
+          return;
+        }
+
+        let html = '<div class="card"><h3>Pending Teacher Requests</h3>';
+        html += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">';
+        reqs.forEach(r => {
+          html += `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:#fff">
+              <div>
+                <strong>${r.name || ''}</strong><br/><small>${r.email}</small>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="action-btn save-btn" onclick="approveTeacher('${r.email.replace(/'/g,'\\\'')}', '${(r.name||'').replace(/'/g,'\\\'')}')">Approve</button>
+                <button class="action-btn delete-btn" onclick="denyTeacher('${r.email.replace(/'/g,'\\\'')}', '${(r.name||'').replace(/'/g,'\\\'')}')">Deny</button>
+              </div>
+            </div>`;
+        });
+        html += '</div></div>';
+        container.innerHTML = html;
+      } catch (e) {
+        console.error('Load teacher requests failed', e);
+      }
+    }
+
+    async function approveTeacher(email, name) {
+      if (!confirm('Approve teacher: ' + email + '?')) return;
+      try {
+        const res = await fetch('/admin/approve-teacher', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ email, name }), credentials: 'include' });
+        if (!res.ok) throw new Error('Approve failed');
+        loadUsers();
+        loadTeacherRequests();
+        document.getElementById('users-msg').innerHTML = '<div class="success">Approved ' + email + '</div>';
+        setTimeout(()=>{ document.getElementById('users-msg').innerHTML = ''; }, 3000);
+      } catch (e) { alert('Approve failed: ' + e.message); }
+    }
+
+    async function denyTeacher(email, name) {
+      if (!confirm('Deny teacher request: ' + email + '?')) return;
+      try {
+        const res = await fetch('/admin/deny-teacher', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ email, name }), credentials: 'include' });
+        if (!res.ok) throw new Error('Deny failed');
+        loadUsers();
+        loadTeacherRequests();
+        document.getElementById('users-msg').innerHTML = '<div class="error">Denied ' + email + '</div>';
+        setTimeout(()=>{ document.getElementById('users-msg').innerHTML = ''; }, 3000);
+      } catch (e) { alert('Deny failed: ' + e.message); }
+    }
+
+    async function adminLogout() {
+      try {
+        console.log('Admin logout initiated...');
+        
+        // Call backend logout (revokes OAuth, clears session)
+        const res = await fetch('/admin/logout', { method: 'POST', credentials: 'include' });
+        
+        if (res.ok) {
+          console.log('Backend logout successful, clearing client state...');
+          
+          // Clear all local storage and session data
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Clear all cookies
+          document.cookie.split(';').forEach((c) => {
+            document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+          });
+          
+          // Wait a moment then redirect
+          setTimeout(() => {
+            console.log('Redirecting to login...');
+            window.location.href = '/admin_login.html';
+          }, 500);
+        } else {
+          alert('Logout failed. Please try again.');
+        }
+      } catch (e) {
+        console.error('Logout error:', e);
+        alert('Error logging out: ' + e.message);
+      }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', saveUserChanges);
+
+    // Load initial data
+    console.log('Dashboard initialized, verifying admin session...');
+    verifyAdminSession().then((ok) => {
+      if (ok) {
+        loadUsers();
+        loadTeacherRequests();
+      }
+    });
+  </script>
+</body>
+</html>
