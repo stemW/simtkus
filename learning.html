@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Learning Pathways — SimTk</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    :root{--accent:#0ea5e9;--muted:#6b7280}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:#f6f8fb;color:#0f172a}
+    header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(0,0,0,.05)}
+    .topbar{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:64px}
+    a.brand{font-weight:700;color:#0f172a;text-decoration:none;display:flex;gap:.6rem;align-items:center}
+    .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.95rem}
+    .brand-text{font-size:1rem}
+    .topnav{display:flex;gap:.6rem;align-items:center}
+    .topnav a{color:var(--muted);text-decoration:none;padding:.45rem .65rem;border-radius:8px}
+    .topnav a:hover{background:rgba(2,6,23,.04);color:#0f172a}
+    .cta{display:inline-block;padding:.5rem .9rem;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+    .topnav a.active{color:#0f172a;border-bottom:2px solid var(--accent);padding-bottom:.225rem}
+    main{max-width:900px;margin:2rem auto;padding:1.2rem;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(13,18,30,.04)}
+    h1{margin:0 0 .5rem;font-size:2rem}
+    h2{margin:1.5rem 0 .75rem;font-size:1.5rem}
+    p{color:#6b7280;line-height:1.6}
+    .pathway-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin:1.5rem 0}
+    .pathway-card{background:linear-gradient(180deg,rgba(14,165,233,.03),transparent);border:1px solid rgba(14,165,233,.06);border-radius:12px;padding:1.5rem;transition:all .28s ease}
+    .pathway-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(14,165,233,.15);border-color:rgba(14,165,233,.12)}
+    .pathway-card h3{margin:.5rem 0 .75rem;color:#0f172a;font-size:1.1rem}
+    .pathway-card p{margin:0;font-size:.95rem}
+    .pathway-icon{display:inline-block;width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;margin-bottom:.75rem}
+    .learning-stats{background:linear-gradient(180deg,rgba(14,165,233,.06),rgba(14,165,233,.02));border-radius:12px;padding:1.5rem;margin:1.5rem 0;border:1px solid rgba(14,165,233,.08)}
+    .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;margin-top:1rem}
+    .stat{text-align:center}
+    .stat-number{font-size:2rem;font-weight:700;color:var(--accent)}
+    .stat-label{color:var(--muted);margin-top:.25rem;font-size:.95rem}
+    .cta-block{background:linear-gradient(135deg,var(--accent),#60a5fa);color:#fff;border-radius:12px;padding:2rem;margin:2rem 0;text-align:center}
+    .cta-block h3{margin:0 0 .75rem;font-size:1.3rem}
+    .cta-block p{color:rgba(255,255,255,.9);margin:0 0 1rem}
+    .cta-block a{display:inline-block;background:rgba(255,255,255,.2);color:#fff;padding:.6rem 1.2rem;border-radius:999px;text-decoration:none;font-weight:600;transition:all .25s ease}
+    .cta-block a:hover{background:rgba(255,255,255,.3);transform:translateY(-2px)}
+    footer{margin-top:1.25rem;text-align:center;color:#6b7280;padding:1rem 0;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)}
+    .footer-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:0}
+    .footer-links a{color:#6b7280;text-decoration:none;font-size:.95rem}
+    .footer-links a:hover{color:var(--accent)}
+  </style>
+</head>
+<body>
+  <header class="topbar-fixed">
+    <div class="topbar">
+      <a class="brand" href="/"><span class="mark">S</span> <span class="brand-text">SimTk</span></a>
+      <nav class="topnav">
+        <a href="/">Home</a>
+        <a href="features.html">Features</a>
+        <a href="community.html">Community</a>
+        <a href="aws_reels.html" class="stem-cta">STEM</a>
+        <a href="about.html">About</a>
+      </nav>
+      <a class="cta" href="video.html">Upload Reels</a>
+    </div>
+  </header>
+  <div style="height:64px" aria-hidden="true"></div>
+
+  <main>
+    <h1>Learning Pathways</h1>
+    <p>Discover structured, personalized learning experiences designed to help students master STEM concepts at their own pace. Each pathway combines simulation-based lessons, interactive practice, and mentorship support.</p>
+
+    <div class="learning-stats">
+      <strong>Learning by the Numbers</strong>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-number">+40%</div>
+          <div class="stat-label">Faster concept mastery with simulations</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">1000+</div>
+          <div class="stat-label">Interactive learning modules</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Adaptive, self-paced learning</div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Available Pathways</h2>
+    <div class="pathway-grid">
+      <div class="pathway-card">
+        <div class="pathway-icon">🧪</div>
+        <h3>Physics Essentials</h3>
+        <p>Master kinematics, forces, energy, and waves through hands-on simulations and real-world experiments.</p>
+      </div>
+      <div class="pathway-card">
+        <div class="pathway-icon">⚗️</div>
+        <h3>Chemistry Lab</h3>
+        <p>Explore molecular structures, reactions, and stoichiometry with safe, interactive virtual experiments.</p>
+      </div>
+      <div class="pathway-card">
+        <div class="pathway-icon">🔬</div>
+        <h3>Biology & Life Sciences</h3>
+        <p>Understand cells, genetics, ecology, and human physiology through visual simulations and guided discovery.</p>
+      </div>
+      <div class="pathway-card">
+        <div class="pathway-icon">📊</div>
+        <h3>Data Science Fundamentals</h3>
+        <p>Learn statistics, data visualization, and analytics with real datasets and interactive dashboards.</p>
+      </div>
+      <div class="pathway-card">
+        <div class="pathway-icon">⚙️</div>
+        <h3>Engineering Design</h3>
+        <p>Apply design thinking, CAD basics, and prototyping concepts through project-based simulations.</p>
+      </div>
+      <div class="pathway-card">
+        <div class="pathway-icon">💻</div>
+        <h3>Computer Science</h3>
+        <p>Build programming skills, algorithms, and computational thinking with interactive coding challenges.</p>
+      </div>
+    </div>
+
+    <h2>How Adaptive Learning Works</h2>
+    <p>SimTk's adaptive learning system personalizes each student's experience:</p>
+    <ul style="color:#6b7280;line-height:1.7">
+      <li><strong>Initial Assessment</strong>: We gauge your current knowledge level in each topic.</li>
+      <li><strong>Personalized Recommendations</strong>: Content difficulty and pacing adjust based on your performance.</li>
+      <li><strong>Real-time Feedback</strong>: Instant hints, explanations, and assessment tools guide your learning.</li>
+      <li><strong>Progress Tracking</strong>: See your growth over time with detailed analytics and achievement badges.</li>
+      <li><strong>Mentorship Integration</strong>: Connect with tutors and peers for clarification and collaboration.</li>
+    </ul>
+
+    <div class="cta-block">
+      <h3>Ready to Start Learning?</h3>
+      <p>Choose a pathway and begin your personalized STEM journey today.</p>
+      <a href="aws_reels.html">Explore STEM Reels</a>
+    </div>
+
+    <h2>What Students Say</h2>
+    <div style="background:#f9fafb;border-radius:10px;padding:1.5rem;margin:1.5rem 0">
+      <p style="margin:0;font-style:italic;color:#0f172a">"The simulations made complex concepts click. I went from struggling with physics to getting A's!" — Alex, High School Junior</p>
+      <p style="margin:1rem 0 0;text-align:right;color:var(--muted);font-size:.9rem">— SimTk User</p>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="about.html">About</a>
+      <a href="vision.html">Vision</a>
+      <a href="learning.html" style="color:var(--accent);font-weight:600">Learning</a>
+      <a href="references.html">References</a>
+    </div>
+    <div style="margin-top:.6rem;color:#6b7280">SimTk — Adaptive STEM Learning for Every Student</div>
+  </footer>
+
+  <script>
+    (function(){
+      try{
+        const path = location.pathname.replace(/\/index\.html$/,'/');
+        document.querySelectorAll('.topnav a').forEach(a=>{
+          try{
+            const href = new URL(a.href, location.href).pathname.replace(/\/$/,'');
+            const cur = path.replace(/\/$/,'');
+            if(href === cur || (href === '/learning.html' && cur === '/learning.html') || (href === '/' && (cur === '' || cur === '/'))){
+              a.classList.add('active');
+            }
+          }catch(e){}
+        });
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

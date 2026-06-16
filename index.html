@@ -19,7 +19,7 @@
     h1{font-size:clamp(1.6rem,3.8vw,2.8rem);margin:0 0 .4rem}
     .lead{color:var(--muted);margin:0 0 1rem;font-size:1.05rem;line-height:1.5}
     .cta-row{display:flex;gap:1rem;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;text-decoration:none;font-weight:600;transition:transform .18s ease,box-shadow .18s ease}
+    .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;text-decoration:none;font-weight:600;transition:all .25s ease}
     .btn:hover{transform:translateY(-2px)}
     .ghost{background:transparent;border:1px solid rgba(15,23,42,.06);color:var(--muted)}
 
@@ -28,10 +28,10 @@
     .network-svg{width:100%;height:auto;max-width:420px}
 
     /* Unified header styles */
-    header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(2,6,23,.03)}
+    header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(0,0,0,.05)}
     .topbar{max-width:1100px;margin:0 auto;padding:0 2.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;height:64px}
     .brand{display:flex;align-items:center;gap:.6rem;font-weight:700;color:#0f172a;text-decoration:none}
-    .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+    .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.95rem}
     .brand-text{font-size:1rem}
     .topnav{display:flex;gap:.6rem;align-items:center}
     .topnav a{color:var(--muted);text-decoration:none;padding:.45rem .65rem;border-radius:8px}
@@ -66,34 +66,35 @@
     @keyframes dash{0%{stroke-dashoffset:0;opacity:.45}50%{stroke-dashoffset:12;opacity:.65}100%{stroke-dashoffset:24;opacity:.45}}
 
     /* Intro overlay */
-    #intro-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,6,23,.6),rgba(2,6,23,.45));backdrop-filter:blur(6px);z-index:1200;transition:opacity .45s ease,visibility .45s ease}
-    #intro-overlay .intro-panel{max-width:760px;margin:0 1rem;padding:2rem;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.98),#fff);box-shadow:0 20px 60px rgba(2,6,23,.36);text-align:center}
+    #intro-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,6,23,.6),rgba(2,6,23,.45));backdrop-filter:blur(6px);z-index:998;transition:opacity .3s,visibility .3s}
+    #intro-overlay .intro-panel{max-width:760px;margin:0 1rem;padding:2rem;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.98),#fff);box-shadow:0 20px 60px rgba(2,6,23,.36);animation:slideUp .4s ease}
     #intro-overlay h2{margin:0 0 .5rem;font-size:clamp(1.6rem,4.2vw,2.2rem)}
     #intro-overlay .intro-lead{color:var(--muted);margin:0 0 1rem}
     #intro-overlay .hint{margin-top:.8rem;color:var(--muted);font-size:.92rem}
     #intro-overlay.intro-hidden{opacity:0;visibility:hidden;pointer-events:none}
     .intro-active body{overflow:hidden}
+    @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
     /* Node hover tooltip */
-    .svg-tooltip{position:fixed;pointer-events:none;background:rgba(2,6,23,.92);color:#fff;padding:.45rem .6rem;border-radius:8px;font-size:.85rem;transform:translate(-50%,-120%);white-space:nowrap;z-index:1300;opacity:0;transition:opacity .14s ease,transform .14s ease}
+    .svg-tooltip{position:fixed;pointer-events:none;background:rgba(2,6,23,.92);color:#fff;padding:.45rem .6rem;border-radius:8px;font-size:.85rem;transform:translate(-50%,-120%);white-space:nowrap;opacity:0;transition:opacity .2s}
     .network-svg .node.hover{transform:scale(1.25)}
   </style>
   <link rel="stylesheet" href="/styles.css">
 </head>
-  <body>
+<body>
   <div id="intro-overlay" aria-hidden="false">
     <div class="intro-panel">
       <h2>Welcome to SimTk</h2>
-      <p class="intro-lead">Explore short, classroom-grade simulation reels — reproducible, private, and built for learning.</p>
+      <p class="intro-lead">Explore short, classroom-grade simulation reels — reproducible, private, and built for adaptive learning.</p>
       <div class="intro-cta-row">
         <button id="enter-btn" class="btn">Enter SimTk</button>
         <a href="/aws_reels.html" class="btn ghost" id="skip-btn">Skip &amp; View Reels</a>
       </div>
-      <div class="hint">Tip: hover the nodes to discover communities</div>
+      <div class="hint">Tip: hover the nodes to discover learning communities</div>
     </div>
   </div>
 
-  <script id="intro-script">(function(){document.documentElement.classList.add('intro-active');const btn=document.getElementById('enter-btn');const skip=document.getElementById('skip-btn');const overlay=document.getElementById('intro-overlay');function enter(){overlay.classList.add('intro-hidden');document.documentElement.classList.remove('intro-active');setTimeout(()=>overlay.setAttribute('aria-hidden','true'),600);}btn.addEventListener('click',enter);skip.addEventListener('click',enter);})();</script>
+  <script id="intro-script">(function(){document.documentElement.classList.add('intro-active');const btn=document.getElementById('enter-btn');const skip=document.getElementById('skip-btn');const overlay=document.getElementById('intro-overlay');if(btn){btn.addEventListener('click',()=>{overlay.classList.add('intro-hidden');document.documentElement.classList.remove('intro-active');});}if(skip){skip.addEventListener('click',()=>{overlay.classList.add('intro-hidden');document.documentElement.classList.remove('intro-active');});}})();</script>
   <header class="topbar-fixed" aria-hidden="false">
     <div class="topbar">
       <a class="brand" href="/">
@@ -116,28 +117,28 @@
     <div class="hero">
       <div class="card">
         <h1>SimTk — Simulation Technology</h1>
-        <p class="lead">A private social network for STEM in the USA — designed for educators, students, and researchers to share simulations, lessons, and experimental learning. Build and browse educational reels, collaborate privately, and help evolve future STEM education.</p>
+        <p class="lead">A private social network for STEM in the USA — designed for educators, students, and researchers to share simulations, lessons, and experimental learning. Build and browse adaptive learning pathways.</p>
 
         <div class="cta-row">
           <a class="btn" href="video.html">Upload Video Reels</a>
-          <a class="btn ghost" href="/about.html">Learn more</a>
+          <a class="btn ghost" href="/learning.html">Explore Learning Pathways</a>
         </div>
 
         <div class="features" aria-hidden>
           <div class="feature">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle"><circle cx="6" cy="6" r="2" fill="#0ea5e9"/><circle cx="18" cy="6" r="2" fill="#34d399"/><circle cx="12" cy="17" r="2" fill="#f97316"/><path d="M7.5 7.5L11 15" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 7.5L13 15" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle"><circle cx="6" cy="6" r="2" fill="#0ea5e9"/><circle cx="18" cy="6" r="2" fill="#34d399"/><circle cx="12" cy="18" r="2" fill="#0ea5e9"/><line x1="8" y1="8" x2="16" y2="16" stroke="#0ea5e9" stroke-width="1"/><line x1="16" y1="8" x2="8" y2="16" stroke="#0ea5e9" stroke-width="1"/></svg>
             <h3>Private Simulations</h3>
             <p>Share simulation videos and exercises with verified classroom groups and labs — privacy-first by design.</p>
           </div>
           <div class="feature">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle"><rect x="3" y="5" width="18" height="14" rx="2" fill="#0ea5e9"/><path d="M8 9h8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle"><rect x="3" y="5" width="18" height="14" rx="2" fill="#0ea5e9"/><path d="M8 9h8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/><path d="M8 13h8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
             <h3>Reels & Lessons</h3>
             <p>Short, focused reels let learners preview experiments and step-by-step simulations quickly.</p>
           </div>
           <div class="feature">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle"><path d="M12 2v20" stroke="#f97316" stroke-width="1.8" stroke-linecap="round"/><path d="M2 12h20" stroke="#f97316" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <h3>Community & Mentorship</h3>
-            <p>Connect with mentors, peers, and institutions to co-develop curriculum and tools for classroom impact.</p>
+            <h3>Adaptive Learning</h3>
+            <p>Connect with mentors, peers, and institutions to personalize your learning journey and co-develop curriculum.</p>
           </div>
         </div>
 
@@ -161,7 +162,6 @@
       </div>
 
       <div class="illustration">
-        <!-- Simple abstract network SVG to represent simulation & community -->
         <svg class="network-svg" viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Network illustration">
           <defs>
             <linearGradient id="g1" x1="0" x2="1">
@@ -170,17 +170,14 @@
             </linearGradient>
           </defs>
           <rect rx="18" width="100%" height="100%" fill="url(#g1)" opacity="0.06"/>
-            <!-- nodes (animated) -->
-            <circle class="node pulse" data-label="Educators" cx="60" cy="60" r="12" fill="#60a5fa"/>
-            <circle class="node" cx="140" cy="30" r="10" fill="#34d399"/>
-            <circle class="node pulse-slow" data-label="Labs" cx="230" cy="70" r="14" fill="#f97316"/>
-            <circle class="node" cx="320" cy="40" r="9" fill="#7c3aed"/>
-            <circle class="node" cx="100" cy="170" r="11" fill="#06b6d4"/>
-            <circle class="node" cx="210" cy="180" r="13" fill="#60a5fa"/>
-            <circle class="node" cx="300" cy="150" r="10" fill="#34d399"/>
-            <circle class="node pulse-slow" data-label="Students" cx="200" cy="280" r="16" fill="#f97316"/>
-          
-          <!-- links (subtle motion) -->
+          <circle class="node pulse" data-label="Educators" cx="60" cy="60" r="12" fill="#60a5fa"/>
+          <circle class="node" cx="140" cy="30" r="10" fill="#34d399"/>
+          <circle class="node pulse-slow" data-label="Researchers" cx="230" cy="70" r="14" fill="#f97316"/>
+          <circle class="node" cx="320" cy="40" r="9" fill="#7c3aed"/>
+          <circle class="node" cx="100" cy="170" r="11" fill="#06b6d4"/>
+          <circle class="node" cx="210" cy="180" r="13" fill="#60a5fa"/>
+          <circle class="node" cx="300" cy="150" r="10" fill="#34d399"/>
+          <circle class="node pulse-slow" data-label="Students" cx="200" cy="280" r="16" fill="#f97316"/>
           <line class="link" x1="72" y1="64" x2="130" y2="36" stroke="#94a3b8" stroke-opacity=".35" stroke-width="2"/>
           <line class="link" x1="150" y1="40" x2="220" y2="72" stroke="#94a3b8" stroke-opacity=".35" stroke-width="2"/>
           <line class="link" x1="240" y1="78" x2="308" y2="44" stroke="#94a3b8" stroke-opacity=".35" stroke-width="2"/>
@@ -188,10 +185,8 @@
           <line class="link" x1="222" y1="190" x2="292" y2="158" stroke="#94a3b8" stroke-opacity=".28" stroke-width="2"/>
           <line class="link" x1="212" y1="193" x2="210" y2="260" stroke="#94a3b8" stroke-opacity=".28" stroke-width="2"/>
           <line class="link" x1="198" y1="292" x2="300" y2="160" stroke="#94a3b8" stroke-opacity=".18" stroke-width="1.5"/>
-
-          <!-- labels -->
           <text x="60" y="96" font-size="12" fill="#475569">Educators</text>
-          <text x="230" y="106" font-size="12" fill="#475569">Labs</text>
+          <text x="210" y="106" font-size="12" fill="#475569">Researchers</text>
           <text x="200" y="310" font-size="12" fill="#475569">Students</text>
         </svg>
       </div>
@@ -201,6 +196,7 @@
       <div style="display:flex;justify-content:center;gap:1rem;flex-wrap:wrap">
         <a href="about.html">About</a>
         <a href="vision.html">Vision</a>
+        <a href="learning.html">Learning Pathways</a>
         <a href="references.html">References</a>
       </div>
       <div style="margin-top:.6rem;color:var(--muted)">SimTk — a privacy-first STEM network focused on education and collaboration within the USA.</div>
@@ -245,7 +241,6 @@
             tooltip.style.opacity = '0'; tooltip.setAttribute('aria-hidden','true');
           });
         });
-        // Small parallax on mouse move for the illustration area
         const ill = document.querySelector('.illustration');
         if(ill){ ill.addEventListener('mousemove', (ev)=>{
           const rect = ill.getBoundingClientRect();
