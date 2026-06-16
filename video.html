@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Page</title>
+    <style>
+      :root {
+        --accent: #0ea5e9;
+        --muted: #6b7280;
+        color-scheme: light;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at top, #f8f6ff, #eef3ff 45%, #e9f7f1);
+        color: #1a1a1a;
+      }
+
+      .card {
+        text-align: center;
+        padding: 3rem 4rem;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 20px 40px rgba(44, 63, 94, 0.12);
+        max-width: 760px;
+        width: min(92vw, 760px);
+      }
+
+      .upload {
+        display: flex;
+        gap: 0.75rem;
+        margin: 1.5rem 0 2rem;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .upload input[type="file"] {
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        border: 1px solid rgba(120, 140, 165, 0.4);
+        background: #f5f7ff;
+        font-size: 0.95rem;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        display: none;
+      }
+
+      .progress-bar .progress-fill {
+        height: 100%;
+        background: #3f6dff;
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 5vw, 3.6rem);
+        margin: 0 0 0.75rem;
+      }
+
+      p {
+        margin: 0 0 1.5rem;
+        font-size: 1.05rem;
+        color: #3a4a5d;
+      }
+
+      .accent {
+        display: inline-block;
+        padding: 0.6rem 1.6rem;
+        border-radius: 999px;
+        background: #3f6dff;
+        color: white;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease,
+          background 0.15s ease, color 0.15s ease;
+      }
+
+      .accent.ghost {
+        background: rgba(63, 109, 255, 0.1);
+        color: #1b3fb6;
+        border: 1px solid rgba(63, 109, 255, 0.6);
+        box-shadow: 0 8px 18px rgba(63, 109, 255, 0.2);
+      }
+
+      .accent:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 22px rgba(63, 109, 255, 0.25);
+      }
+
+      .accent:active {
+        transform: translateY(0);
+        box-shadow: 0 6px 14px rgba(63, 109, 255, 0.18);
+      }
+
+      /* TikTok-style vertical feed: each reel fills viewport (below header) and uses portrait 9:16 videos */
+      .reels {
+        height: calc(100vh - 64px);
+        overflow-y: auto;
+        scroll-snap-type: y mandatory;
+        display: block;
+        gap: 1rem;
+        padding: 0.5rem 0;
+      }
+
+      .reel {
+        position: relative;
+        height: calc(100vh - 64px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0;
+        overflow: visible;
+        background: transparent;
+        scroll-snap-align: start;
+        padding: 1rem 0;
+      }
+
+      /* Centered portrait video with strong surrounding shadow */
+      .reel video {
+        width: auto;
+        height: 92vh;
+        max-height: calc(100vh - 120px);
+        aspect-ratio: 9 / 16;
+        object-fit: cover;
+        display: block;
+        border-radius: 18px;
+        box-shadow: 0 40px 120px rgba(2,6,23,0.55), 0 8px 30px rgba(0,0,0,0.35) inset;
+        transform: translateZ(0);
+      }
+
+      .reel .label {
+        display: none !important;
+      }
+
+      .reel .label {
+        position: absolute;
+        left: 16px;
+        bottom: 16px;
+        background: rgba(10, 18, 28, 0.7);
+        color: white;
+        padding: 0.4rem 0.7rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+      }
+
+      /* Unified header styles */
+      header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(2,6,23,.03)}
+      .topbar{max-width:1100px;margin:0 auto;padding:0 1.2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+      .brand{display:flex;align-items:center;gap:.5rem;font-weight:700;color:#0f172a;text-decoration:none}
+      .mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+      .brand-text{font-size:1rem}
+      .topnav{display:flex;gap:.5rem}
+      .topnav a{color:#475569;text-decoration:none;padding:.4rem .6rem;border-radius:8px}
+      .topnav a:hover{background:rgba(2,6,23,.04);color:#0f172a}
+      .cta{display:inline-block;padding:.5rem .9rem;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+      .topnav a.active{color:#0f172a;border-bottom:2px solid var(--accent);padding-bottom:.225rem}
+    </style>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar-fixed" aria-hidden="false">
+      <div class="topbar">
+        <a class="brand" href="/"><span class="mark">S</span> <span class="brand-text">SimTk</span></a>
+        <nav class="topnav">
+          <a href="/">Home</a>
+          <a href="features.html">Features</a>
+          <a href="community.html">Community</a>
+          <a href="aws_reels.html" class="stem-cta">STEM</a>
+          <a href="about.html">About</a>
+        </nav>
+        <a class="cta" href="video.html">Upload Reels</a>
+      </div>
+    </header>
+    <div style="height:64px" aria-hidden="true"></div>
+    <main class="card">
+      <p>Upload and manage short simulation reels. <br>Sign in to upload privately to Drive or publish publicly.</p>
+      <div class="upload">
+        <input id="video-input" type="file" accept="video/*" multiple style="display: none;" />
+        <button id="choose-file-btn" class="accent" type="button">Choose Files</button>
+        <button id="google-signin" class="accent" type="button">Login</button>
+        <button id="upload-s3-btn" class="accent primary-cta glow stem-cta" type="button" style="display: none;">STEM Reels <span class="badge">NEW</span></button>
+        <button id="google-logout" class="accent ghost" type="button" style="display: none;">Logout</button>
+        <div class="progress-bar" id="upload-progress">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+      <div class="reels" id="reels">
+        <div class="reel">
+          <div class="label">Waiting for a video...</div>
+        </div>
+      </div>
+      <a class="accent" href="index.html">Back to home</a>
+    </main>
+        <script>
+          (function(){
+            try{
+              const path = location.pathname.replace(/\/index\.html$/,'/');
+              document.querySelectorAll('.topnav a').forEach(a=>{
+                try{
+                  const href = new URL(a.href, location.href).pathname.replace(/\/$/,'');
+                  const cur = path.replace(/\/$/,'');
+                  if(href === cur || (href === '/' && (cur === '' || cur === '/'))){
+                    a.classList.add('active');
+                  }
+                }catch(e){}
+              });
+            }catch(e){}
+          })();
+        </script>
+    <script>
+      const input = document.getElementById("video-input");
+      const reels = document.getElementById("reels");
+      const chooseFileBtn = document.getElementById("choose-file-btn");
+      const signInButton = document.getElementById("google-signin");
+      const uploadS3Btn = document.getElementById("upload-s3-btn");
+      const logoutButton = document.getElementById("google-logout");
+      const progressBar = document.getElementById("upload-progress");
+      const progressFill = document.getElementById("progress-fill");
+      let autoScrollId = null;
+      let autoScrollPaused = false;
+      let currentIndex = 0;
+      let userScrollTimer = null;
+      let userInteractTimer = null;
+      let userInteracting = false;
+      let selectedFiles = [];
+      let isAuthenticated = false;
+      let isTeacher = false;
+      let isAdminUser = false;
+      let uploadedToDrive = false;
+      let uploadedToS3 = false;
+
+      const getReels = () => Array.from(reels.querySelectorAll(".reel"));
+
+      const scrollToReelIndex = (index, behavior = "smooth") => {
+        const reelNodes = getReels();
+        if (reelNodes.length === 0) {
+          return;
+        }
+        const clamped = Math.max(0, Math.min(index, reelNodes.length - 1));
+        currentIndex = clamped;
+        const target = reelNodes[clamped];
+        reels.scrollTo({ top: target.offsetTop, behavior });
+        const nextVideo = target.querySelector("video");
+        if (nextVideo) {
+          if (clamped === 0) {
+            nextVideo.currentTime = 0;
+          }
+          nextVideo.play().catch(() => {});
+        }
+      };
+
+      const scrollToNextReel = (currentReel) => {
+        const reelNodes = Array.from(reels.querySelectorAll(".reel"));
+        const currentIndex = reelNodes.indexOf(currentReel);
+        const nextIndex =
+          currentIndex >= reelNodes.length - 1 ? 0 : currentIndex + 1;
+        scrollToReelIndex(nextIndex);
+      };
+
+      const renderPlaceholder = () => {
+        reels.innerHTML = "";
+        const reel = document.createElement("div");
+        reel.className = "reel";
+        const label = document.createElement("div");
+        label.className = "label";
+        label.textContent = "Waiting for a video...";
+        reel.appendChild(label);
+        reels.appendChild(reel);
+      };
+
+      const removeWaitingPlaceholder = () => {
+        const placeholder = reels.querySelector(".reel .label");
+        if (placeholder && placeholder.textContent === "Waiting for a video...") {
+          const parent = placeholder.closest('.reel');
+          if (parent) parent.remove();
+        }
+      };
+
+      const cleanupEmptyReels = () => {
+        const reelNodes = Array.from(reels.querySelectorAll('.reel'));
+        for (const node of reelNodes) {
+          const vid = node.querySelector('video');
+          const label = node.querySelector('.label');
+          // remove reels that have no video and no meaningful label
+          if (!vid && (!label || !label.textContent || label.textContent.trim() === '')) {
+            node.remove();
+            continue;
+          }
+          // remove reels with a video that has an empty src
+          if (vid && (!vid.src || vid.src.trim() === '')) {
+            node.remove();
+            continue;
+          }
+        }
+      };
+
+      // Render Drive-backed reels (server `/videos` stream endpoint)
+      const renderReelsDrive = (files) => {
+        if (!files || files.length === 0) {
+          renderPlaceholder();
+          return;
+        }
+        reels.innerHTML = "";
+        files.forEach((file, index) => {
+          const reel = document.createElement("div");
+          reel.className = "reel";
+
+          const video = document.createElement("video");
+          video.src = `/stream/${file.id}`;
+          video.controls = true;
+          video.setAttribute('controlsList', 'nodownload');
+          video.disablePictureInPicture = true;
+          video.loop = false;
+          video.muted = false;
+          video.playsInline = true;
+          video.autoplay = index === 0;
+          video.addEventListener("ended", () => {
+            scrollToNextReel(reel);
+          });
+          video.addEventListener('contextmenu', (ev) => ev.preventDefault());
+
+          const label = document.createElement("div");
+          label.className = "label";
+          label.textContent = file.name;
+
+          reel.appendChild(video);
+          reel.appendChild(label);
+          reels.appendChild(reel);
+        });
+        currentIndex = 0;
+      };
+
+      // Note: S3 rendering removed — `video.html` is Drive-only.
+      const canUpload = () => Boolean(isTeacher || isAdminUser);
+
+      const updateUploadUi = () => {
+        const allowUploads = canUpload();
+        const hasFiles = selectedFiles.length > 0;
+        signInButton.style.display = isAuthenticated ? "none" : "inline-block";
+        chooseFileBtn.style.display = allowUploads ? "inline-block" : "none";
+        uploadS3Btn.style.display = (allowUploads && hasFiles) ? "inline-block" : "none";
+        logoutButton.style.display = (isAuthenticated || isAdminUser) ? "inline-block" : "none";
+        input.disabled = !allowUploads;
+        if (!allowUploads) {
+          selectedFiles = [];
+          try { input.value = null; } catch (e) {}
+          uploadS3Btn.style.display = "none";
+          renderPlaceholder();
+        }
+      };
+      const loadVideos = async () => {
+        // Drive-only listing for `video.html`.
+        try {
+          const res = await fetch("/videos", { credentials: 'include' });
+          if (res.status === 401) {
+            try {
+              const body = await res.json();
+              if (body && body.error === 'insufficient_scope') {
+                return window.location.href = '/auth/google';
+              }
+            } catch (e) {}
+            renderPlaceholder();
+            return;
+          }
+          if (!res.ok) {
+            renderPlaceholder();
+            return;
+          }
+          const data = await res.json();
+          renderReelsDrive(data.files || []);
+        } catch (e) {
+          console.error('Drive videos fetch failed', e && e.message);
+          renderPlaceholder();
+        }
+      };
+
+      const refreshStatus = async () => {
+        const res = await fetch("/status", { credentials: 'include' });
+        if (!res.ok) {
+          isAuthenticated = false;
+          isTeacher = false;
+          isAdminUser = false;
+          updateUploadUi();
+          return;
+        }
+        const data = await res.json();
+        console.log('authenticated:', data.authenticated);
+        // set teacher flag from server
+        isTeacher = Boolean(data.isTeacher);
+        isAdminUser = Boolean(data.isAdmin);
+        isAuthenticated = Boolean(data.authenticated);
+        updateUploadUi();
+        // Show one-time decision messages (approved/denied)
+        try {
+          if (data.decision && data.decision.message) {
+            // simple alert for now
+            alert(data.decision.message);
+          }
+        } catch (e) {}
+        
+        // Check if user is admin
+        if (data.isAdmin) {
+          showAdminPanel(data);
+        }
+        
+        if (data.authenticated) {
+          await loadVideos();
+        } else if (selectedFiles.length === 0) {
+          renderPlaceholder();
+        }
+      };
+      
+      const showAdminPanel = async (userData) => {
+        // Check if admin panel already exists
+        if (document.getElementById('admin-panel')) return;
+        
+        // Create admin panel
+        const panel = document.createElement('div');
+        panel.id = 'admin-panel';
+        panel.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 20px;
+          border-radius: 12px;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+          z-index: 10000;
+          min-width: 280px;
+          font-family: 'Segoe UI', sans-serif;
+        `;
+        
+        panel.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin: 0; font-size: 18px;">🔐 Admin Panel</h3>
+            <button onclick="document.getElementById('admin-panel').remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer;">✕</button>
+          </div>
+          <div style="font-size: 13px; margin-bottom: 12px; opacity: 0.9;">
+            ${userData.user.name || userData.user.email}<br/>
+            <strong>Level:</strong> ${userData.adminLevel}
+          </div>
+          <div style="border-top: 1px solid rgba(255,255,255,0.3); padding-top: 12px; margin-top: 12px;">
+            <div id="admin-stats" style="font-size: 13px; margin-bottom: 12px;">
+              Loading stats...
+            </div>
+            <a href="/admin/dashboard.html" style="display: block; padding: 10px; background: white; color: #667eea; text-decoration: none; border-radius: 6px; text-align: center; font-weight: 600; margin-bottom: 8px;">
+              📊 Full Dashboard
+            </a>
+            <button onclick="viewAllUsers()" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              👥 View Users
+            </button>
+          </div>
+        `;
+        
+        document.body.appendChild(panel);
+        
+        // Load admin stats
+        try {
+          const res = await fetch('/admin/users', { credentials: 'include' });
+          if (res.ok) {
+            const data = await res.json();
+            document.getElementById('admin-stats').innerHTML = `
+              <div><strong>Total Users:</strong> ${data.total || 0}</div>
+              <div><strong>School Domains:</strong> ${data.users.length || 0}</div>
+            `;
+          }
+        } catch (e) {
+          console.error('Failed to load admin stats:', e);
+        }
+      };
+      
+      window.viewAllUsers = async () => {
+        try {
+          const res = await fetch('/admin/users', { credentials: 'include' });
+          if (!res.ok) {
+            alert('Failed to load users');
+            return;
+          }
+          const data = await res.json();
+          
+          // Build schools table
+          let schoolsHtml = '<div style="max-height: 300px; overflow-y: auto;">';
+          schoolsHtml += '<table style="width: 100%; border-collapse: collapse; background: white; color: #333;">';
+          schoolsHtml += '<tr style="background: #f5f5f5;"><th style="padding: 8px; text-align: left;">Domain</th><th style="padding: 8px; text-align: right;">Logins</th><th style="padding: 8px; text-align: left;">Last Seen</th></tr>';
+          
+          data.schools.forEach(school => {
+            const lastSeen = school.lastSeen ? new Date(school.lastSeen).toLocaleString() : 'N/A';
+            schoolsHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px;">${school.domain}</td><td style="padding: 8px; text-align: right;">${school.count}</td><td style="padding: 8px; font-size: 11px;">${lastSeen}</td></tr>`;
+          });
+          
+          schoolsHtml += '</table></div>';
+          
+          // Build users table
+          let usersHtml = '<div style="max-height: 300px; overflow-y: auto;">';
+          usersHtml += '<table style="width: 100%; border-collapse: collapse; background: white; color: #333;">';
+          usersHtml += '<tr style="background: #f5f5f5;"><th style="padding: 8px; text-align: left;">Name</th><th style="padding: 8px; text-align: left;">Email</th><th style="padding: 8px; text-align: right;">Logins</th><th style="padding: 8px; text-align: left;">Last Login</th></tr>';
+          
+          data.users.forEach(user => {
+            const lastLogin = user.last_login ? new Date(user.last_login).toLocaleString() : 'N/A';
+            usersHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px;">${user.name}</td><td style="padding: 8px; font-size: 12px;">${user.email}</td><td style="padding: 8px; text-align: right;">${user.login_count}</td><td style="padding: 8px; font-size: 11px;">${lastLogin}</td></tr>`;
+          });
+          
+          usersHtml += '</table></div>';
+          
+          // Build admins table
+          let adminsHtml = '<div style="max-height: 300px; overflow-y: auto;">';
+          adminsHtml += '<table style="width: 100%; border-collapse: collapse; background: white; color: #333;">';
+          adminsHtml += '<tr style="background: #f5f5f5;"><th style="padding: 8px; text-align: left;">Name</th><th style="padding: 8px; text-align: left;">Email</th><th style="padding: 8px; text-align: right;">Logins</th><th style="padding: 8px; text-align: left;">Last Login</th></tr>';
+          
+          if (data.admins && data.admins.length > 0) {
+            data.admins.forEach(admin => {
+              const lastLogin = admin.last_login ? new Date(admin.last_login).toLocaleString() : 'N/A';
+              adminsHtml += `<tr style="border-bottom: 1px solid #eee;"><td style="padding: 8px;">${admin.name}</td><td style="padding: 8px; font-size: 12px;">${admin.email}</td><td style="padding: 8px; text-align: right;">${admin.login_count}</td><td style="padding: 8px; font-size: 11px;">${lastLogin}</td></tr>`;
+            });
+          } else {
+            adminsHtml += '<tr><td colspan="4" style="padding: 8px; text-align: center; color: #999;">No admin activity</td></tr>';
+          }
+          
+          adminsHtml += '</table></div>';
+          
+          // Create side panel anchored near the upload area so admin user management
+          // does not completely obscure the reels. This panel appears behind the
+          // admin quick panel but above the main content for easy access.
+          const panel = document.createElement('div');
+          panel.style.cssText = `
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            width: 640px;
+            max-height: 70vh;
+            overflow: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            z-index: 5000;
+          `;
+          panel.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <h2 style="margin:0;color:#333;font-size:16px">User Management</h2>
+              <div>
+                <button id="close-user-panel" style="background:#dc2626;border:none;color:#fff;padding:6px 10px;border-radius:6px;cursor:pointer">Close</button>
+              </div>
+            </div>
+            <div style="margin-bottom:12px"><strong>By School Domain (${data.totalSchools})</strong></div>
+            ${schoolsHtml}
+            <hr style="margin:12px 0" />
+            <div style="margin-bottom:12px"><strong>Individual Users (${data.totalUsers})</strong></div>
+            ${usersHtml}
+            <hr style="margin:12px 0" />
+            <div><strong>Admin Activity (${data.totalAdmins})</strong></div>
+            ${adminsHtml}
+          `;
+          document.body.appendChild(panel);
+          document.getElementById('close-user-panel').addEventListener('click', () => panel.remove());
+        } catch (e) {
+          alert('Error loading users: ' + e.message);
+        }
+      };
+
+      chooseFileBtn.addEventListener("click", () => {
+        input.click();
+      });
+
+      signInButton.addEventListener("click", () => {
+        window.location.href = "/auth/google";
+      });
+
+      // Automatic Drive upload for authenticated users with upload privileges
+      async function autoUploadToDrive(files) {
+        if (!files || files.length === 0) return;
+        // ensure the server will accept the upload (Drive endpoint requires auth)
+        const totalSize = files.reduce((sum, file) => sum + file.size, 0);
+        let uploadedSize = 0;
+        progressBar.style.display = "block";
+        progressFill.style.width = "0%";
+
+        for (const file of files) {
+          await new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("video", file);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/upload", true);
+            xhr.withCredentials = true;
+            xhr.upload.onprogress = (event) => {
+              if (event.lengthComputable) {
+                const percentComplete = ((uploadedSize + event.loaded) / totalSize) * 100;
+                progressFill.style.width = percentComplete + "%";
+              }
+            };
+            xhr.onload = () => {
+              if (xhr.status === 200) {
+                uploadedSize += file.size;
+                resolve();
+              } else {
+                console.error("Drive upload failed", xhr.status, xhr.responseText);
+                reject();
+              }
+            };
+            xhr.onerror = () => {
+              console.error("Drive upload failed");
+              reject();
+            };
+            xhr.send(formData);
+          });
+        }
+
+        progressBar.style.display = "none";
+        uploadedToDrive = true;
+        // after Drive upload, refresh listing so user sees their Drive uploads
+        try { await loadVideos(); } catch (e) { console.warn('refresh after Drive upload failed', e && e.message); }
+      }
+
+      uploadS3Btn.addEventListener("click", async () => {
+        if (selectedFiles.length === 0) return;
+        // hide only this S3 button while it runs; keep Drive visible
+        uploadS3Btn.style.display = 'none';
+        uploadS3Btn.disabled = true;
+        uploadS3Btn.style.opacity = '0.6';
+
+        const totalSize = selectedFiles.reduce((sum, file) => sum + file.size, 0);
+        let uploadedSize = 0;
+        progressBar.style.display = "block";
+        progressFill.style.width = "0%";
+
+        for (const file of selectedFiles) {
+          await new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("video", file);
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/upload-s3", true);
+            xhr.upload.onprogress = (event) => {
+              if (event.lengthComputable) {
+                const percentComplete = ((uploadedSize + event.loaded) / totalSize) * 100;
+                progressFill.style.width = percentComplete + "%";
+              }
+            };
+            xhr.onload = () => {
+              if (xhr.status === 200) {
+                try {
+                  const data = JSON.parse(xhr.responseText);
+                  console.log('S3 upload successful', data);
+                } catch (e) {
+                  console.error('Failed to parse S3 response', e);
+                }
+                uploadedSize += file.size;
+                resolve();
+              } else {
+                console.error("S3 Upload failed");
+                reject();
+              }
+            };
+            xhr.onerror = () => {
+              console.error("S3 Upload failed");
+              reject();
+            };
+            xhr.send(formData);
+          });
+        }
+
+        progressBar.style.display = "none";
+        // mark S3 uploaded for this selection and hide S3 button
+        uploadedToS3 = true;
+        uploadS3Btn.disabled = false;
+        uploadS3Btn.style.opacity = '1';
+        uploadS3Btn.style.display = 'none';
+        // ensure Drive shows only if it hasn't already been used for this selection
+        // NOTE: Do NOT refresh Drive listing here — `video.html` stays Drive-only.
+      });
+
+      logoutButton.addEventListener("click", async () => {
+        const res = await fetch("/logout", { method: "POST", credentials: 'include' });
+        console.log('logout response ok:', res.ok);
+        if (!res.ok) {
+          console.error("Logout failed");
+          return;
+        }
+        await refreshStatus();
+      });
+
+      input.addEventListener("change", async () => {
+        const files = input.files ? Array.from(input.files) : [];
+        if (files.length === 0) {
+          // restore original S3 button label when no files selected
+          uploadS3Btn.innerHTML = 'STEM Reels <span class="badge">NEW</span>';
+          updateUploadUi();
+          return;
+        }
+        
+        selectedFiles = files;
+        // new selection -> reset per-selection upload flags
+        uploadedToDrive = false;
+        uploadedToS3 = false;
+        // ensure buttons are enabled when files selected
+        uploadS3Btn.disabled = false;
+        uploadS3Btn.style.opacity = '1';
+        // show upload buttons depending on auth and flags
+        updateUploadUi();
+        // when files are chosen, change the S3 button label to indicate public upload
+        uploadS3Btn.innerHTML = 'Upload to Public';
+        
+        // If user is authenticated and has upload privileges, auto-upload to Drive
+        if (isAuthenticated && canUpload()) {
+          try {
+            await autoUploadToDrive(selectedFiles);
+          } catch (e) {
+            console.warn('Automatic Drive upload failed', e && e.message);
+          }
+        }
+
+        if (!isAuthenticated && canUpload()) {
+          // Show local files in reels
+          const placeholder = reels.querySelector(".reel .label");
+          if (placeholder && placeholder.textContent === "Waiting for a video...") {
+            reels.innerHTML = "";
+          }
+          files.forEach((file, index) => {
+            const url = URL.createObjectURL(file);
+            const reel = document.createElement("div");
+            reel.className = "reel";
+
+            const video = document.createElement("video");
+            video.src = url;
+            video.controls = true;
+            // discourage direct downloads (frontend-only; not foolproof)
+            video.setAttribute('controlsList', 'nodownload');
+            video.disablePictureInPicture = true;
+            video.loop = false;
+            video.muted = false;
+            video.playsInline = true;
+            video.autoplay = index === 0;
+            video.addEventListener("ended", () => {
+              scrollToNextReel(reel);
+            });
+            video.addEventListener('contextmenu', (ev) => ev.preventDefault());
+
+            const label = document.createElement("div");
+            label.className = "label";
+            label.textContent = `${file.name} (local)`;
+
+            reel.appendChild(video);
+            reel.appendChild(label);
+            reels.appendChild(reel);
+          });
+          currentIndex = 0;
+        }
+      });
+
+      const startAutoScroll = () => {
+        if (autoScrollId) {
+          return;
+        }
+        autoScrollId = window.setInterval(() => {
+          if (autoScrollPaused) {
+            return;
+          }
+          const reelNodes = getReels();
+          if (reelNodes.length === 0) {
+            return;
+          }
+          const nextIndex =
+            currentIndex >= reelNodes.length - 1 ? 0 : currentIndex + 1;
+          scrollToReelIndex(nextIndex);
+        }, 4000);
+      };
+
+      reels.addEventListener("scroll", () => {
+        if (!userInteracting) {
+          return;
+        }
+        if (userScrollTimer) {
+          window.clearTimeout(userScrollTimer);
+        }
+        userScrollTimer = window.setTimeout(() => {
+          const reelNodes = getReels();
+          if (reelNodes.length === 0) {
+            return;
+          }
+          const currentTop = reels.scrollTop;
+          let closestIndex = 0;
+          let closestDistance = Infinity;
+          reelNodes.forEach((node, index) => {
+            const distance = Math.abs(node.offsetTop - currentTop);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestIndex = index;
+            }
+          });
+          currentIndex = closestIndex;
+        }, 120);
+      });
+
+      const pauseAutoScrollForInteraction = () => {
+        userInteracting = true;
+        autoScrollPaused = true;
+        if (userInteractTimer) {
+          window.clearTimeout(userInteractTimer);
+        }
+        userInteractTimer = window.setTimeout(() => {
+          userInteracting = false;
+          autoScrollPaused = false;
+        }, 1500);
+      };
+
+      reels.addEventListener("wheel", pauseAutoScrollForInteraction, {
+        passive: true,
+      });
+
+      reels.addEventListener("touchstart", pauseAutoScrollForInteraction, {
+        passive: true,
+      });
+
+      refreshStatus();
+      startAutoScroll();
+      const boot = async () => {
+        await refreshStatus();
+        startAutoScroll();
+      };
+
+      boot();
+
+      // Remove any explicit download attributes and block right-click on video links
+      try {
+        document.querySelectorAll('a[download]').forEach(a => a.removeAttribute('download'));
+      } catch (e) {}
+
+      document.addEventListener('contextmenu', (e) => {
+        // block context menu when it's on a video or a link to a media file
+        const vid = e.target.closest && e.target.closest('video');
+        if (vid) {
+          e.preventDefault();
+          return;
+        }
+        const anchor = e.target.closest && e.target.closest('a');
+        if (anchor && /\.(mp4|webm|ogg)(\?|$)/i.test(anchor.href || '')) {
+          e.preventDefault();
+        }
+      });
+    </script>
+    <footer style="margin-top:1.25rem;text-align:center;color:#6b7280;padding:1rem 0;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)">
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="about.html">About</a>
+        <a href="vision.html">Vision</a>
+        <a href="references.html">References</a>
+      </div>
+      <div style="margin-top:.5rem">© SimTk</div>
+    </footer>
+    <!-- User profile modal -->
+    <div id="user-profile-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);z-index:9999">
+      <div style="background:#fff;padding:1.25rem;border-radius:12px;max-width:520px;width:94%;box-shadow:0 20px 40px rgba(2,6,23,0.4);">
+        <h3 style="margin-top:0">Complete your SimTk profile</h3>
+        <div style="display:flex;flex-direction:column;gap:0.6rem">
+          <input id="profile-name" placeholder="Full name" />
+          <div id="profile-interests-container" style="display:flex;flex-direction:column;gap:0.35rem">
+            <div id="profile-interests-list" style="display:flex;gap:0.4rem;flex-wrap:wrap"></div>
+            <input id="profile-interests" placeholder="Type interest and press Enter (max 3)" />
+            <div style="font-size:0.85rem;color:#6b7280">Press Enter to add interests; backspace removes last when empty.</div>
+          </div>
+          <input id="profile-years" placeholder="Years of experience" type="number" min="0" />
+          <label style="display:flex;align-items:center;gap:0.5rem"><input id="profile-teach" type="checkbox" /> I want to become a teacher</label>
+          <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.5rem">
+            <button id="profile-save" class="accent">Save</button>
+            <button id="profile-close" class="accent ghost">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Check server status and prompt for profile when needed
+      (async function(){
+        try {
+          const st = await fetch('/status', { credentials: 'include' }).then(r => r.json());
+          if (st && st.needsProfile) {
+            const modal = document.getElementById('user-profile-modal');
+            const nameIn = document.getElementById('profile-name');
+            const interestsList = document.getElementById('profile-interests-list');
+            const interestsIn = document.getElementById('profile-interests');
+            const yearsIn = document.getElementById('profile-years');
+            const teachIn = document.getElementById('profile-teach');
+            const saveBtn = document.getElementById('profile-save');
+            const closeBtn = document.getElementById('profile-close');
+            modal.style.display = 'flex';
+
+            // Interest tags state
+            let interestTags = [];
+
+            const renderTags = () => {
+              interestsList.innerHTML = '';
+              interestTags.forEach((tag, idx) => {
+                const el = document.createElement('div');
+                el.textContent = tag;
+                el.style.padding = '0.25rem 0.5rem';
+                el.style.background = '#eef2ff';
+                el.style.borderRadius = '999px';
+                el.style.fontSize = '0.9rem';
+                el.style.cursor = 'pointer';
+                el.addEventListener('click', () => {
+                  interestTags.splice(idx, 1);
+                  renderTags();
+                });
+                interestsList.appendChild(el);
+              });
+            };
+
+            const addTag = (value) => {
+              const v = String(value || '').trim();
+              if (!v) return;
+              if (interestTags.length >= 3) return;
+              if (interestTags.includes(v)) return;
+              interestTags.push(v);
+              renderTags();
+            };
+
+            interestsIn.addEventListener('keydown', (ev) => {
+              if (ev.key === 'Enter') {
+                ev.preventDefault();
+                addTag(interestsIn.value);
+                interestsIn.value = '';
+              } else if (ev.key === 'Backspace' && interestsIn.value === '') {
+                // remove last tag
+                interestTags.pop();
+                renderTags();
+              }
+            });
+
+            // Try to prefill from existing profile
+            try {
+              const p = await fetch('/user/profile', { credentials: 'include' }).then(r=>r.json());
+              if (p && p.profile) {
+                nameIn.value = p.profile.name || (st.user && st.user.name) || '';
+                // populate interest tags
+                interestTags = Array.isArray(p.profile.interests) ? p.profile.interests.slice(0,3) : [];
+                renderTags();
+                yearsIn.value = p.profile.years_experience || '';
+                teachIn.checked = !!p.profile.want_to_teach;
+              } else {
+                nameIn.value = (st.user && st.user.name) || '';
+              }
+            } catch (e) {
+              nameIn.value = (st.user && st.user.name) || '';
+            }
+
+            saveBtn.addEventListener('click', async () => {
+              const body = {
+                name: nameIn.value.trim(),
+                interests: interestTags.slice(0,3),
+                years_experience: yearsIn.value ? Number(yearsIn.value) : null,
+                want_to_teach: teachIn.checked
+              };
+              try {
+                const resp = await fetch('/user/profile', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body), credentials: 'include' });
+                if (resp.ok) {
+                  modal.style.display = 'none';
+                } else {
+                  alert('Failed to save profile');
+                }
+              } catch (e) { alert('Save failed'); }
+            });
+
+            closeBtn.addEventListener('click', ()=>{ modal.style.display = 'none'; });
+          }
+        } catch (e) {
+          // ignore
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>About — SimTk</title>
+  <style>
+    :root{--accent:#0ea5e9;--muted:#6b7280}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:#f6f8fb;color:#0f172a}
+    header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(2,6,23,.03)}
+    .topbar{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:64px}
+    a.brand{font-weight:700;color:#0f172a;text-decoration:none}
+    .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+    .brand-text{font-size:1rem}
+    .topnav{display:flex;gap:.6rem;align-items:center}
+    .topnav a{color:var(--muted);text-decoration:none;padding:.45rem .65rem;border-radius:8px}
+    .topnav a:hover{background:rgba(2,6,23,.04);color:#0f172a}
+    .cta{display:inline-block;padding:.5rem .9rem;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+    .topnav a.active{color:#0f172a;border-bottom:2px solid var(--accent);padding-bottom:.225rem}
+    main{max-width:900px;margin:2rem auto;padding:1.2rem;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(13,18,30,.04)}
+    h1{margin:0 0 .5rem}
+    p{color:#6b7280}
+    nav a{margin-left:1rem;color:#475569;text-decoration:none}
+  </style>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar-fixed">
+    <div class="topbar">
+      <a class="brand" href="/"><span class="mark">S</span> <span class="brand-text">SimTk</span></a>
+      <nav class="topnav">
+        <a href="/">Home</a>
+        <a href="features.html">Features</a>
+        <a href="community.html">Community</a>
+        <a href="aws_reels.html" class="stem-cta">STEM</a>
+        <a href="about.html">About</a>
+      </nav>
+      <a class="cta" href="video.html">Upload Reels</a>
+    </div>
+  </header>
+  <div style="height:64px" aria-hidden="true"></div>
+  <main>
+    <h1>About SimTk</h1>
+    <p>SimTk (Simulation Technology) is a privacy-first, US-focused platform for sharing STEM educational content. Our goal is to empower educators, researchers, and students to collaborate and iterate on simulations and curriculum, using short reels and private sharing groups.</p>
+    <p>SimTk combines simple video reels, private groups, and mentorship tools to improve hands-on STEM learning.</p>
+    <p>For a concise, sourced statement of our vision and the data behind the need for a private STEM network, see the <a href="vision.html">Vision</a> page.</p>
+  </main>
+  <footer style="margin-top:1.25rem;text-align:center;color:#6b7280;padding:1rem 0;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)">
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="about.html">About</a>
+      <a href="vision.html">Vision</a>
+      <a href="references.html">References</a>
+    </div>
+    <div style="margin-top:.5rem">© SimTk</div>
+  </footer>
+  <script>
+    (function(){
+      try{
+        const path = location.pathname.replace(/\/index\.html$/,'/');
+        document.querySelectorAll('.topnav a').forEach(a=>{
+          try{
+            const href = new URL(a.href, location.href).pathname.replace(/\/$/,'');
+            const cur = path.replace(/\/$/,'');
+            if(href === cur || (href === '/' && (cur === '' || cur === '/'))){
+              a.classList.add('active');
+            }
+          }catch(e){}
+        });
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

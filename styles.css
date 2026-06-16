@@ -1,249 +1,50 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+:root{--accent:#0ea5e9;--muted:#6b7280}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:var(--bg, #f6f8fb);color:var(--text, #0f172a)}
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: #333;
-}
+/* Unified header */
+header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(2,6,23,.03)}
+.topbar{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 1.2rem;height:64px}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:700;color:#0f172a;text-decoration:none}
+.mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+.brand-text{font-size:1rem}
+.topnav{display:flex;gap:.6rem;align-items:center}
+.topnav a{color:var(--muted);text-decoration:none;padding:.45rem .65rem;border-radius:8px}
+.topnav a:hover{background:rgba(2,6,23,.04);color:#0f172a}
+.cta{display:inline-block;padding:.5rem .9rem;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+.topnav a.active{color:#0f172a;border-bottom:2px solid var(--accent);padding-bottom:.225rem}
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
+/* Accent buttons used across the site */
+.accent{display:inline-block;padding:.65rem 1rem;border-radius:12px;background:linear-gradient(90deg,var(--accent),#60a5fa);color:#fff;text-decoration:none;font-weight:700;box-shadow:0 10px 30px rgba(63,109,255,0.18);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.accent:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 18px 40px rgba(63,109,255,0.25);filter:brightness(1.03)}
+.accent:active{transform:translateY(-1px) scale(0.997)}
+.accent.ghost{background:rgba(63,109,255,0.06);color:var(--muted);border:1px solid rgba(63,109,255,0.12);box-shadow:none}
 
-/* Navigation Bar */
-.navbar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem 0;
-    position: sticky;
-    top: 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+/* Strong primary CTA used to draw attention */
+.primary-cta{padding:.8rem 1.2rem;border-radius:14px;font-size:1.03rem;letter-spacing:0.02em;position:relative;overflow:visible}
+.primary-cta::after{content:'';position:absolute;inset:auto -8px -8px -8px;border-radius:14px;background:radial-gradient(circle at 20% 10%, rgba(63,109,255,0.18), transparent 25%);z-index:-1;opacity:.9;transition:opacity .25s ease}
+.primary-cta.glow{animation:cta-pulse 2.6s infinite}
 
-.navbar .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+@keyframes cta-pulse{0%{transform:translateY(0)}10%{transform:translateY(-3px)}50%{transform:translateY(0)}100%{transform:translateY(0)}}
 
-.logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-}
+/* small attention badge variant */
+.accent .badge{display:inline-block;margin-left:.5rem;padding:.08rem .4rem;border-radius:999px;background:#fff;color:var(--accent);font-weight:700;font-size:.75rem}
 
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
+/* Accessibility: focus styles */
+.accent:focus,.cta:focus{outline:3px solid rgba(14,165,233,0.18);outline-offset:3px}
 
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-}
 
-.nav-links a:hover {
-    opacity: 0.8;
-}
+/* Prominent STEM CTA used across headers (except on aws_reels.html) */
+.stem-cta{display:inline-flex;align-items:center;gap:.7rem;padding:.95rem 1.5rem;border-radius:20px;background:linear-gradient(90deg,#ff7a18,#ffb86b);color:#fff;text-decoration:none;font-weight:800;font-size:1.12rem;box-shadow:0 22px 60px rgba(255,122,24,0.20),0 8px 22px rgba(255,184,107,0.08);transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;position:relative;z-index:22;border:1px solid rgba(255,255,255,0.10);background-size:200% 200%;animation:stem-shimmer 3.6s linear infinite}
+.stem-cta:hover{transform:translateY(-5px) scale(1.02);box-shadow:0 38px 90px rgba(255,122,24,0.32);filter:brightness(1.05)}
+.stem-cta:active{transform:translateY(-1px)}
+.stem-cta::after{content:'';position:absolute;inset:-8px;border-radius:22px;background:radial-gradient(circle at 30% 10%, rgba(255,122,24,0.16), transparent 34%);filter:blur(14px);z-index:-1;opacity:.95;transition:opacity .25s ease;animation:stem-glow 2.8s infinite}
+.stem-cta .hint-bullet{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.18);display:inline-block}
 
-/* Hero Section */
-.hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 100px 0;
-    text-align: center;
-}
+@keyframes stem-shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes stem-glow{0%{transform:scale(1);opacity:.8}50%{transform:scale(1.03);opacity:1}100%{transform:scale(1);opacity:.8}}
 
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    animation: slideDown 0.8s ease;
-}
+.stem-cta .badge{background:#fff;color:#ff7a18;font-weight:800;padding:.12rem .45rem;border-radius:999px;font-size:.78rem}
 
-.hero p {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
-    opacity: 0.95;
-}
+@media (max-width:720px){.stem-cta{padding:.55rem .8rem;font-size:.95rem}.topnav{gap:.4rem}}
 
-.cta-button {
-    background: white;
-    color: #667eea;
-    padding: 12px 40px;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.cta-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* About Section */
-.about {
-    padding: 60px 0;
-    background: #f8f9fa;
-    text-align: center;
-}
-
-.about h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: #667eea;
-}
-
-.about p {
-    font-size: 1.1rem;
-    max-width: 700px;
-    margin: 0 auto;
-    line-height: 1.8;
-    color: #555;
-}
-
-/* Features Section */
-.features {
-    padding: 80px 0;
-}
-
-.features h2 {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 3rem;
-    color: #667eea;
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.feature-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.feature-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
-}
-
-.feature-card h3 {
-    color: #667eea;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.feature-card p {
-    color: #666;
-    line-height: 1.7;
-}
-
-/* Footer */
-footer {
-    background: #2c3e50;
-    color: white;
-    padding: 40px 0;
-    text-align: center;
-}
-
-footer p {
-    margin-bottom: 1.5rem;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-
-.footer-links a {
-    color: #ecf0f1;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-    color: #667eea;
-}
-
-/* Animations */
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .nav-links {
-        gap: 1rem;
-        font-size: 0.9rem;
-    }
-
-    .hero h1 {
-        font-size: 2rem;
-    }
-
-    .hero p {
-        font-size: 1rem;
-    }
-
-    .about h2,
-    .features h2 {
-        font-size: 2rem;
-    }
-
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .logo {
-        font-size: 1.5rem;
-    }
-
-    .nav-links {
-        gap: 0.5rem;
-        font-size: 0.8rem;
-    }
-
-    .hero h1 {
-        font-size: 1.5rem;
-    }
-
-    .hero p {
-        font-size: 0.9rem;
-    }
-
-    .cta-button {
-        padding: 10px 30px;
-        font-size: 1rem;
-    }
-}

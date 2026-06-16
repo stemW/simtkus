@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vision — SimTk</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    main{max-width:900px;margin:2rem auto;padding:1.2rem;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(13,18,30,.04)}
+    h1{margin:0 0 .5rem}
+    p{color:#6b7280}
+    .stat{font-weight:700;color:#0f172a;margin:0}
+    .refs{font-size:.9rem;color:#475569;margin-top:1rem}
+    /* Layout for stat rows */
+    .stat-row{display:flex;gap:1rem;align-items:flex-start;margin-top:1rem}
+    .stat-row .text{flex:1}
+    .svg-inline{width:84px;height:84px;flex:0 0 84px}
+    /* Animations (larger and more noticeable) */
+    .fade-in{animation:fadeInUp .8s ease both}
+    figure{transition:transform .28s ease;margin:0}
+    figure:hover{transform:translateY(-8px)}
+    svg.float{animation:float 4s ease-in-out infinite}
+    svg.float-large{animation:floatLarge 4s ease-in-out infinite}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+    @keyframes floatLarge{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
+    @keyframes dashFlow{from{stroke-dashoffset:0}to{stroke-dashoffset:-24}}
+    @media (max-width:800px){
+      .viz-grid{grid-template-columns:1fr!important}
+      .stat-row{flex-direction:column;align-items:stretch}
+      .svg-inline{width:64px;height:64px;flex:0 0 64px}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar-fixed">
+    <div class="topbar">
+      <a class="brand" href="/"><span class="mark">S</span> <span class="brand-text">SimTk</span></a>
+      <nav class="topnav">
+        <a href="/">Home</a>
+        <a href="features.html">Features</a>
+        <a href="community.html">Community</a>
+        <a href="aws_reels.html" class="stem-cta">STEM</a>
+        <a href="about.html">About</a>
+      </nav>
+      <a class="cta" href="video.html">Upload Reels</a>
+    </div>
+  </header>
+  <div style="height:64px" aria-hidden="true"></div>
+
+  <main class="fade-in">
+    <h1>Vision — Why SimTk</h1>
+    <p>SimTk is a dedicated STEM platform designed so educators, students, and researchers can share simulation-based lessons within trusted learning communities. The sections below summarize practical benefits and opportunities a focused, private network provides for classrooms across the United States.</p>
+
+    <div class="stat-row fade-in">
+      <svg class="svg-inline float-large" viewBox="0 0 100 100" role="img" aria-hidden="true">
+        <rect x="6" y="10" width="28" height="80" rx="4" fill="#0b5394"></rect>
+        <rect x="36" y="28" width="28" height="62" rx="4" fill="#0b7a3e"></rect>
+        <rect x="66" y="46" width="28" height="44" rx="4" fill="#b34700"></rect>
+      </svg>
+      <div class="text">
+        <div class="stat">1) Workforce demand and learning gaps</div>
+        <p>Demand for technical skills remains strong across computing, engineering, healthcare, and advanced manufacturing. Many US classrooms lack consistent access to qualified STEM teachers and updated materials; a curated network helps distribute vetted curriculum and mentor connections to under-resourced districts.</p>
+      </div>
+    </div>
+
+    <div class="stat-row fade-in">
+      <svg class="svg-inline float-large" viewBox="0 0 100 100" role="img" aria-hidden="true">
+        <circle cx="30" cy="50" r="20" fill="#0b5394"></circle>
+        <rect x="54" y="30" width="36" height="40" rx="6" fill="#b34700"></rect>
+      </svg>
+      <div class="text">
+        <div class="stat">2) Student privacy and classroom safety</div>
+        <p>Educators and students benefit from environments where classroom work and learning drafts stay within trusted groups. A private platform supports sharing previews and formative materials with colleagues and families while minimizing public exposure.</p>
+      </div>
+    </div>
+
+    <div class="stat-row fade-in">
+      <svg class="svg-inline float-large" viewBox="0 0 100 100" role="img" aria-hidden="true">
+        <rect x="8" y="36" width="28" height="28" rx="4" fill="#0b5394"></rect>
+        <rect x="36" y="36" width="28" height="28" rx="4" fill="#b34700"></rect>
+        <rect x="64" y="36" width="28" height="28" rx="4" fill="#0b7a3e"></rect>
+      </svg>
+      <div class="text">
+        <div class="stat">3) Simulation-based learning reduces risk and accelerates mastery</div>
+        <p>Interactive simulations let learners rehearse experiments virtually before performing them in physical labs, reducing incidents, saving equipment time, and speeding skill development—especially helpful for schools with limited lab access.</p>
+      </div>
+    </div>
+
+    <div class="stat-row fade-in">
+      <svg class="svg-inline float-large" viewBox="0 0 100 100" role="img" aria-hidden="true">
+        <circle cx="20" cy="40" r="10" fill="#b34700"></circle>
+        <circle cx="50" cy="40" r="10" fill="#0b7a3e"></circle>
+        <circle cx="80" cy="40" r="10" fill="#0b5394"></circle>
+      </svg>
+      <div class="text">
+        <div class="stat">4) Improving content quality and instruction</div>
+        <p>A focused community with experienced contributors helps surface high-quality materials, identify common misconceptions, and circulate improved demonstrations—supporting better instructional consistency and student outcomes.</p>
+      </div>
+    </div>
+
+    <div class="stat-row fade-in">
+      <svg class="svg-inline float-large" viewBox="0 0 100 100" role="img" aria-hidden="true">
+        <path d="M10 80 C30 30, 70 30, 90 80" stroke="#0b5394" stroke-width="6" fill="none" stroke-linecap="round"></path>
+        <circle cx="24" cy="68" r="6" fill="#0b7a3e"></circle>
+        <circle cx="76" cy="68" r="6" fill="#b34700"></circle>
+      </svg>
+      <div class="text">
+        <div class="stat">5) Community & long‑term societal benefits</div>
+        <p>Stronger connections among teachers, mentors, and local labs build pathways from classroom learning to research and industry. Improved instruction and mentorship increase college readiness, diversify the STEM pipeline, and support innovations that enhance daily life.</p>
+      </div>
+    </div>
+
+    <section aria-labelledby="viz-heading" style="margin-top:1.2rem">
+      <h2 id="viz-heading">Visual summary</h2>
+      <p style="color:#475569">The graphics below illustrate the main opportunities a private STEM network offers: broader access, safer hands-on learning via simulations, and a focused community to reduce misleading content.</p>
+
+      <div class="flow-wide fade-in" style="margin-top:1rem">
+        <figure style="background:#fff;padding:1rem;border-radius:12px;box-shadow:0 8px 24px rgba(13,18,30,.06);text-align:center">
+          <svg width="100%" height="140" viewBox="0 0 900 140" role="img" aria-label="Simulation flow full">
+            <defs>
+              <marker id="bigArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0 0 L8 4 L0 8 z" fill="#0f172a" />
+              </marker>
+            </defs>
+            <!-- large flow boxes -->
+            <g>
+              <rect x="30" y="28" rx="12" ry="12" width="240" height="84" fill="#0b5394" />
+              <text x="150" y="64" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">Practice in Simulation</text>
+            </g>
+            <g>
+              <rect x="330" y="28" rx="12" ry="12" width="240" height="84" fill="#b34700" />
+              <text x="450" y="64" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">Preview & Refine</text>
+            </g>
+            <g>
+              <rect x="630" y="28" rx="12" ry="12" width="240" height="84" fill="#0b7a3e" />
+              <text x="750" y="64" fill="#ffffff" font-size="18" font-weight="700" text-anchor="middle">Safer Hands-on Labs</text>
+            </g>
+            <!-- animated connectors -->
+            <path class="flow-arrow" d="M270 70 L330 70" stroke="#0f172a" stroke-width="4" fill="none" marker-end="url(#bigArrow)" stroke-linecap="round" stroke-dasharray="12 8" />
+            <path class="flow-arrow" d="M570 70 L630 70" stroke="#0f172a" stroke-width="4" fill="none" marker-end="url(#bigArrow)" stroke-linecap="round" stroke-dasharray="12 8" />
+          </svg>
+          <figcaption style="font-size:.98rem;color:#6b7280;margin-top:.5rem">Simulation flow (detailed): practice in simulation, preview & refine, then safer hands-on implementation.</figcaption>
+        </figure>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1rem">
+        <!-- Access gap (qualitative) -->
+          <figure class="fade-in" style="background:#fff;padding:0.8rem;border-radius:10px;box-shadow:0 6px 18px rgba(13,18,30,.04);text-align:center">
+          <svg class="float" width="100%" height="120" viewBox="0 0 300 120" role="img" aria-label="Access by region">
+            <rect x="10" y="20" width="70" height="80" rx="6" fill="#0b5394"></rect>
+            <rect x="110" y="50" width="70" height="50" rx="6" fill="#0b7a3e"></rect>
+            <rect x="210" y="70" width="70" height="30" rx="6" fill="#b34700"></rect>
+            <text x="45" y="15" font-size="12" fill="#0f172a" text-anchor="middle">Urban</text>
+            <text x="145" y="15" font-size="12" fill="#0f172a" text-anchor="middle">Suburban</text>
+            <text x="245" y="15" font-size="12" fill="#0f172a" text-anchor="middle">Rural</text>
+          </svg>
+          <figcaption style="font-size:.95rem;color:#6b7280;margin-top:.5rem">Access gap (qualitative): urban areas typically have more resources; private networks help reach under-resourced schools.</figcaption>
+        </figure>
+        <!-- Content quality & moderation (revised) -->
+        <figure class="fade-in" style="background:#fff;padding:0.8rem;border-radius:10px;box-shadow:0 6px 18px rgba(13,18,30,.04);text-align:center">
+          <svg class="float" width="100%" height="140" viewBox="0 0 320 140" role="img" aria-label="Moderation and verification">
+            <!-- stacked documents -->
+            <rect x="18" y="22" width="88" height="60" rx="6" fill="#fff" stroke="#0f172a" stroke-width="2"></rect>
+            <rect x="42" y="32" width="88" height="60" rx="6" fill="#fff" stroke="#0f172a" stroke-width="2" opacity="0.95"></rect>
+            <rect x="66" y="42" width="88" height="60" rx="6" fill="#fff" stroke="#0f172a" stroke-width="2" opacity="0.9"></rect>
+
+            <!-- lines on top document -->
+            <g fill="#0f172a" opacity="0.9">
+              <rect x="76" y="54" width="60" height="6" rx="2"></rect>
+              <rect x="76" y="68" width="42" height="6" rx="2"></rect>
+            </g>
+
+            <!-- magnifier (inspection) -->
+            <g transform="translate(170,36)">
+              <circle cx="24" cy="24" r="18" fill="none" stroke="#0b5394" stroke-width="4"></circle>
+              <rect x="36" y="36" width="24" height="6" rx="2" fill="#0b5394" transform="rotate(30 36 36)"></rect>
+            </g>
+
+            <!-- badge / verified mark -->
+            <g transform="translate(250,28)">
+              <circle cx="24" cy="24" r="18" fill="#0b7a3e"></circle>
+              <path d="M18 24 l4 4 l8 -10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
+
+            <!-- label -->
+            
+          </svg>
+          <figcaption style="font-size:.95rem;color:#6b7280;margin-top:.5rem">Expert review and clear verification badges help surface vetted lessons and flag materials needing clarification; community notes add context for instructors.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <div class="refs">
+      Sources and further reading: reports from the National Science Foundation, Bureau of Labor Statistics projections, National Center for Education Statistics (NAEP) findings on achievement gaps, and education research on simulation-based learning and privacy best practices.
+    </div>
+  </main>
+
+  <footer style="margin-top:1.25rem;text-align:center;color:#6b7280;padding:1rem 0;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)">
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="about.html">About</a>
+      <a href="vision.html">Vision</a>
+      <a href="references.html">References</a>
+    </div>
+    <div style="margin-top:.5rem">© SimTk</div>
+  </footer>
+
+  <script>
+    (function(){
+      try{
+        const path = location.pathname.replace(/\/index\.html$/,'/');
+        document.querySelectorAll('.topnav a').forEach(a=>{
+          try{
+            const href = new URL(a.href, location.href).pathname.replace(/\/$/,'');
+            const cur = path.replace(/\/$/,'');
+            if(href === cur || (href === '/' && (cur === '' || cur === '/'))){
+              a.classList.add('active');
+            }
+          }catch(e){}
+        });
+      }catch(e){}
+    })();
+  </script>
+</body>
+</html>

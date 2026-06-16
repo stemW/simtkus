@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Q&A | SimTk</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Page-specific light styling; main look comes from styles.css */
+    body { max-width: 960px; margin: 0 auto; padding: 24px; font-family: 'Segoe UI', sans-serif; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    h1 { margin: 0; }
+    .nav-btn { display: inline-block; padding: 8px 16px; background: #0b73ff; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; }
+    .nav-btn:hover { background: #0955cc; }
+    form { display: grid; gap: 12px; margin: 16px 0 24px; }
+    label { display: grid; gap: 4px; font-weight: 600; }
+    input, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+    button { cursor: pointer; padding: 10px 14px; border: none; border-radius: 6px; background: #0b73ff; color: #fff; font-weight: 700; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .card { border: 1px solid #e5e5e5; border-radius: 8px; padding: 12px; margin-bottom: 10px; background: #fafafa; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .card-content { flex: 1; }
+    .delete-btn { padding: 6px 10px; font-size: 12px; background: #dc2626; color: #fff; border: none; border-radius: 4px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .meta { font-size: 12px; color: #666; margin-bottom: 6px; }
+    #status { margin-top: 8px; font-weight: 600; }
+    .error { color: #dc2626; }
+    .success { color: #059669; }
+    .info { color: #0b73ff; }
+    .warning-box { padding: 12px; border-radius: 6px; margin: 8px 0; }
+    .warning-box.error { background: #fee2e2; border: 1px solid #fecaca; }
+    .warning-box.info { background: #dbeafe; border: 1px solid #bfdbfe; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Student Q&A</h1>
+    <a href="/aws_reels.html" class="nav-btn">Back to Reels</a>
+  </header>
+  <p>Ask a question and see recent questions from other students.</p>
+
+  <form id="qa-form" style="display:none;">
+    <label>Name (optional)
+      <input type="text" name="name" placeholder="Your name" />
+    </label>
+    <label>Email (optional)
+      <input type="email" name="email" placeholder="you@example.com" />
+    </label>
+    <label>Question
+      <textarea name="question" rows="4" placeholder="Type your question..." required></textarea>
+    </label>
+    <button type="submit">Submit question</button>
+    <div id="status"></div>
+  </form>
+
+  <section>
+    <div id="auth-check">Checking authentication and Drive connection...</div>
+    <div id="error-message" style="display:none;"></div>
+    <div id="questions" style="display:none;"></div>
+    <h2 style="display:none;" id="questions-heading">Recent questions</h2>
+  </section>
+
+  <script>
+    const form = document.getElementById('qa-form');
+    const statusEl = document.getElementById('status');
+    const listEl = document.getElementById('questions');
+    const authCheckEl = document.getElementById('auth-check');
+    const errorEl = document.getElementById('error-message');
+    const questionsHeading = document.getElementById('questions-heading');
+    let questionsData = [];
+
+    // Show error message
+    function showError(message) {
+      errorEl.style.display = 'block';
+      errorEl.className = 'warning-box error';
+      errorEl.innerHTML = `<strong>Error:</strong> ${message}`;
+    }
+
+    // Show info message
+    function showInfo(message) {
+      errorEl.style.display = 'block';
+      errorEl.className = 'warning-box info';
+      errorEl.innerHTML = `<strong>Info:</strong> ${message}`;
+    }
+
+    // Clear messages
+    function clearMessages() {
+      errorEl.style.display = 'none';
+      statusEl.textContent = '';
+    }
+
+    // Check if user is logged in and Drive is accessible
+    async function checkAuth() {
+      try {
+        const res = await fetch('/status', { method: 'GET' });
+        if (!res.ok) {
+          showError('Failed to check authentication status');
+          return false;
+        }
+
+        const data = await res.json();
+        
+        if (data.authenticated) {
+          // User is logged in, now check if Drive is accessible
+          console.log('User authenticated. Checking Drive access...');
+          const driveCheckRes = await fetch('/questions', { method: 'GET' });
+          
+          if (driveCheckRes.status === 500) {
+            const errorData = await driveCheckRes.json();
+            if (errorData.error === 'app_folder_not_found') {
+              showError('Google Drive app folder could not be found or created. Please try logging in again.');
+              return false;
+            } else {
+              showError('Failed to access Google Drive: ' + (errorData.error || 'Unknown error'));
+              return false;
+            }
+          }
+          
+          if (driveCheckRes.ok) {
+            clearMessages();
+            form.style.display = 'grid';
+            authCheckEl.style.display = 'none';
+            listEl.style.display = 'block';
+            questionsHeading.style.display = 'block';
+            return true;
+          } else {
+            showError('Failed to access Q&A file on Google Drive. Please try again.');
+            return false;
+          }
+        } else {
+          // Show message for 30 seconds then redirect
+          let countdown = 30;
+          authCheckEl.innerHTML = `<div style="text-align: center; padding: 40px; background: #fff3cd; border-radius: 8px; border: 2px solid #ffc107;">
+            <h2 style="color: #856404; margin-bottom: 16px;">Kindly log in first</h2>
+            <p style="color: #856404; font-size: 16px; margin: 16px 0;">You need to log in with Google to access Q&A.</p>
+            <p style="color: #856404; font-size: 16px; margin: 16px 0;">Redirecting in <strong id="countdown">${countdown}</strong> seconds...</p>
+            <a href="/video.html" style="display: inline-block; padding: 10px 14px; background: #0b73ff; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 600; margin-top: 16px;">Click Here to Go Now</a>
+          </div>`;
+          form.style.display = 'none';
+          listEl.style.display = 'none';
+          questionsHeading.style.display = 'none';
+          
+          // Countdown timer
+          const countdownEl = document.getElementById('countdown');
+          const interval = setInterval(() => {
+            countdown--;
+            countdownEl.textContent = countdown;
+            if (countdown <= 0) {
+              clearInterval(interval);
+              window.location.href = '/video.html';
+            }
+          }, 1000);
+          
+          return false;
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        showError('Unable to verify login. Please refresh the page. Error: ' + err.message);
+        return false;
+      }
+    }
+
+    async function loadQuestions() {
+      try {
+        const res = await fetch('/questions');
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || 'Failed to load questions');
+        }
+        questionsData = data.items || [];
+        renderQuestions();
+      } catch (e) {
+        console.error('Load questions error:', e);
+        listEl.innerHTML = '<p class="error">Failed to load questions: ' + e.message + '</p>';
+      }
+    }
+
+    function renderQuestions() {
+      if (!questionsData || !questionsData.length) {
+        listEl.innerHTML = '<p style="color: #666; font-style: italic;">No questions yet. Be the first to ask!</p>';
+        return;
+      }
+      listEl.innerHTML = questionsData.map(item => {
+        const when = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Unknown time';
+        const who = item.name || 'Anonymous';
+        const questionText = (item.question || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        
+        // Calculate if delete button should show (within 30 seconds)
+        const now = Date.now();
+        const createdTime = new Date(item.createdAt).getTime();
+        const ageMs = now - createdTime;
+        const ageSeconds = Math.floor(ageMs / 1000);
+        const timeLeft = Math.max(0, 30 - ageSeconds);
+        
+        let deleteBtn = '';
+        if (timeLeft > 0) {
+          deleteBtn = `<button class="delete-btn" data-id="${item.id}" data-timeleft="${timeLeft}" onclick="deleteQuestion('${item.id}')">Delete (${timeLeft}s)</button>`;
+        }
+        
+        return `<div class="card"><div class="card-content"><div class="meta">${who} • ${when}</div><div>${questionText}</div></div>${deleteBtn}</div>`;
+      }).join('');
+      
+      // Start countdown timers for delete buttons
+      updateDeleteButtonTimers();
+    }
+
+    function updateDeleteButtonTimers() {
+      const buttons = document.querySelectorAll('.delete-btn');
+      buttons.forEach(btn => {
+        const timeLeft = parseInt(btn.getAttribute('data-timeleft'), 10);
+        if (timeLeft > 0) {
+          let remaining = timeLeft;
+          const interval = setInterval(() => {
+            remaining--;
+            if (remaining <= 0) {
+              clearInterval(interval);
+              btn.remove();
+            } else {
+              btn.textContent = `Delete (${remaining}s)`;
+            }
+          }, 1000);
+        }
+      });
+    }
+
+    async function deleteQuestion(id) {
+      if (!confirm('Are you sure you want to delete this question?')) return;
+      
+      try {
+        const res = await fetch(`/questions/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        
+        if (res.status === 403) {
+          showError('Delete time limit has expired (30 seconds)');
+          return;
+        }
+        
+        if (!data.ok) {
+          showError('Failed to delete: ' + (data.error || 'Unknown error'));
+          return;
+        }
+        
+        // Show success and reload questions
+        statusEl.textContent = 'Question deleted successfully!';
+        statusEl.className = 'success';
+        await new Promise(resolve => setTimeout(resolve, 800));
+        await loadQuestions();
+      } catch (err) {
+        console.error('Delete error:', err);
+        showError('Failed to delete question: ' + err.message);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearMessages();
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      statusEl.textContent = 'Submitting...';
+      
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      
+      try {
+        const res = await fetch('/questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || 'Failed to submit');
+        }
+        statusEl.textContent = 'Question submitted successfully!';
+        statusEl.className = 'success';
+        form.reset();
+        // Reload questions
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await loadQuestions();
+      } catch (err) {
+        console.error('Submit error:', err);
+        statusEl.textContent = 'Could not submit question. Please try again: ' + err.message;
+        statusEl.className = 'error';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // Check auth and load questions on page load
+    (async () => {
+      const authed = await checkAuth();
+      if (authed) {
+        await loadQuestions();
+      }
+    })();
+  </script>
+</body>
+</html>

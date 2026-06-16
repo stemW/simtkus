@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AWS Reels — SimTk</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--muted:#94a3b8;--accent:#3f6dff;--accent-2:#60a5fa}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:#e6eef8;background:linear-gradient(180deg,#071020,#071428)}
+    .wrap{max-width:1100px;margin:0 auto;padding:1.2rem}
+    header{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0}
+    a.brand{color:#fff;text-decoration:none;font-weight:700;display:flex;gap:.6rem;align-items:center}
+    .mark{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+    main{margin-top:1rem}
+     /* Reusable buttons similar to index.html */
+     .btn{display:inline-flex;align-items:center;gap:.6rem;padding:.6rem 1rem;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;text-decoration:none;font-weight:600;transition:transform .18s ease,box-shadow .18s ease}
+     .btn:hover{transform:translateY(-2px)}
+     .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:.6rem 1rem;border-radius:999px;text-decoration:none}
+     .cta{display:inline-block;padding:.5rem .9rem;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;text-decoration:none;font-weight:600}
+
+    /* TikTok-style vertical feed: centered portrait videos with stronger surrounding shadow */
+    .reels{height:calc(100vh - 96px);overflow-y:auto;scroll-snap-type:y mandatory;display:block;gap:1rem;padding:0.5rem 0}
+    .reel{position:relative;height:calc(100vh - 96px);display:flex;align-items:center;justify-content:center;border-radius:0;overflow:visible;background:transparent;scroll-snap-align:start;padding:1rem 0}
+    .reel video{width:auto;height:92vh;max-height:calc(100vh - 120px);aspect-ratio:9/16;object-fit:cover;display:block;border-radius:18px;box-shadow:0 40px 120px rgba(2,6,23,0.55),0 8px 30px rgba(0,0,0,0.35) inset;transform:translateZ(0)}
+    .label{display:none !important}
+    .notice{margin:1rem 0;padding:.8rem;border-radius:8px;background:rgba(255,255,255,0.03);color:#cfe3ff}
+    .controls{display:flex;gap:.5rem;align-items:center}
+    button.refresh{background:transparent;border:1px solid rgba(255,255,255,0.08);color:#dff; padding:.45rem .7rem;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="/"> <span class="mark">S</span> <span>SimTk — Public Reels</span></a>
+      <div class="controls">
+        <a class="btn ghost" href="/" id="home-btn">Home</a>
+        <a class="cta" href="/video.html" id="upload-btn">STEM Upload</a>
+        <a class="btn ghost" href="/qna.html" id="qna-btn">Q&A</a>
+        <button class="refresh" id="refresh">Refresh</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="notice" id="notice">Loading reels from the server...</div>
+      <div class="reels" id="reels"></div>
+    </main>
+  </div>
+
+    <script>
+    const reelsEl = document.getElementById('reels');
+    const notice = document.getElementById('notice');
+    const refreshBtn = document.getElementById('refresh');
+    let autoScrollTimer = null;
+    let pauseTimeout = null;
+    const AUTO_INTERVAL = 4000;
+
+    function stopAutoScroll(){
+      if (autoScrollTimer) { clearInterval(autoScrollTimer); autoScrollTimer = null; }
+    }
+
+    function startAutoScroll(){
+      stopAutoScroll();
+      autoScrollTimer = setInterval(()=>{
+        const items = Array.from(reelsEl.querySelectorAll('.reel'));
+        if (!items.length) return;
+        // find first fully visible item
+        let current = 0;
+        const scrollTop = reelsEl.scrollTop;
+        for (let i=0;i<items.length;i++){
+          if (items[i].offsetTop >= scrollTop - 1) { current = i; break; }
+        }
+        const next = (current >= items.length - 1) ? 0 : current + 1;
+        reelsEl.scrollTo({ top: items[next].offsetTop, behavior: 'smooth' });
+        // play next video's playback
+        const v = items[next].querySelector('video');
+        if (v) { try { v.currentTime = 0; v.play().catch(()=>{}); } catch(e){} }
+      }, AUTO_INTERVAL);
+    }
+
+    function pauseAutoScrollTransient(){
+      stopAutoScroll();
+      if (pauseTimeout) clearTimeout(pauseTimeout);
+      pauseTimeout = setTimeout(()=>{ startAutoScroll(); }, 2500);
+    }
+
+    async function loadReels(){
+      stopAutoScroll();
+      notice.textContent = 'Loading reels from the server...';
+      reelsEl.innerHTML = '';
+      try{
+        const res = await fetch('/s3/videos');
+        if (!res.ok) {
+          const txt = await res.text().catch(()=>null);
+          notice.textContent = 'Failed to load reels: ' + (txt || res.status);
+          return;
+        }
+        const data = await res.json();
+        const files = (data && data.files) ? data.files : [];
+        if (!files || files.length === 0) {
+          notice.textContent = 'No reels found.';
+          return;
+        }
+        notice.textContent = '';
+        files.forEach((f, idx) => {
+          const card = document.createElement('div');
+          card.className = 'reel';
+
+          const video = document.createElement('video');
+          video.src = f.url || f.presignedUrl || f.location || '';
+          video.controls = true;
+          video.playsInline = true;
+          video.muted = false;
+          video.autoplay = idx === 0;
+          video.setAttribute('controlsList','nodownload');
+          video.disablePictureInPicture = true;
+          video.loop = false;
+          video.addEventListener('contextmenu', e => e.preventDefault());
+          video.addEventListener('ended', () => { /* auto-advance handled by observer or auto-scroll */ });
+
+          const label = document.createElement('div');
+          label.className = 'label';
+          label.textContent = f.key || f.name || 'untitled';
+
+          card.appendChild(video);
+          card.appendChild(label);
+          reelsEl.appendChild(card);
+        });
+
+        // when user interacts with the scroll, pause auto scroll briefly
+        reelsEl.addEventListener('wheel', ()=> pauseAutoScrollTransient(), { passive: true });
+        reelsEl.addEventListener('touchstart', ()=> pauseAutoScrollTransient(), { passive: true });
+        reelsEl.addEventListener('pointerdown', ()=> pauseAutoScrollTransient(), { passive: true });
+
+        // play/pause videos when scrolled into view using IntersectionObserver
+        const observer = new IntersectionObserver((entries)=>{
+          entries.forEach(ent => {
+            const v = ent.target.querySelector('video');
+            if (!v) return;
+            if (ent.isIntersecting && ent.intersectionRatio > 0.6) {
+              v.play().catch(()=>{});
+            } else {
+              try{ v.pause(); }catch(e){}
+            }
+          });
+        }, { root: reelsEl, threshold: [0.6] });
+        Array.from(reelsEl.querySelectorAll('.reel')).forEach(r => observer.observe(r));
+
+        // start auto-scroll loop
+        startAutoScroll();
+      }catch(err){
+        console.error(err);
+        notice.textContent = 'Error loading reels; ensure S3 is configured and the server has access.';
+      }
+    }
+
+    refreshBtn.addEventListener('click', loadReels);
+
+    // Initial load
+    loadReels();
+
+    // Disable download links and context menu globally for extra deterrence (client-side only)
+    document.addEventListener('contextmenu', e => {
+      const v = e.target.closest && e.target.closest('video');
+      if (v) e.preventDefault();
+    });
+    
+    // No JS sizing: rely on CSS fixed reel heights and object-fit:cover for consistent display.
+  </script>
+</body>
+</html>

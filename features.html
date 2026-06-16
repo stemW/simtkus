@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Features — SimTk</title>
+  <style>
+    :root{--accent:#0ea5e9;--muted:#6b7280}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:0;background:#f6f8fb;color:#0f172a}
+    header.topbar-fixed{position:fixed;left:0;right:0;top:0;height:64px;z-index:999;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.95));backdrop-filter:blur(6px);border-bottom:1px solid rgba(2,6,23,.03)}
+    .topbar{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:64px}
+    a.brand{font-weight:700;color:#0f172a;text-decoration:none}
+    .mark{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+    .brand-text{font-size:1rem}
+    .topnav{display:flex;gap:.6rem;align-items:center}
+    .topnav a{color:var(--muted);text-decoration:none;padding:.45rem .65rem;border-radius:8px}
+    .topnav a:hover{background:rgba(2,6,23,.04);color:#0f172a}
+    .cta{display:inline-block;padding:.5rem .9rem;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+    .topnav a.active{color:#0f172a;border-bottom:2px solid var(--accent);padding-bottom:.225rem}
+    main{max-width:900px;margin:2rem auto;padding:1.2rem;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(13,18,30,.04)}
+    h1{margin:0 0 .5rem}
+    p{color:#6b7280}
+    nav a{margin-left:1rem;color:#475569;text-decoration:none}
+    .icon{display:inline-block;width:1.6rem;text-align:center;margin-right:.5rem}
+    .feature-cta{border:1px solid rgba(2,6,23,.04);padding:1rem;border-radius:10px;background:linear-gradient(180deg,rgba(14,165,233,.03),transparent);margin:1rem 0}
+    .feature-cta h3{margin:.25rem 0 .5rem}
+    .form-row{display:flex;gap:.5rem;margin-bottom:.5rem}
+    .form-row input,.form-row select{flex:1;padding:.5rem;border:1px solid #e6eef7;border-radius:8px}
+    textarea{width:100%;min-height:80px;padding:.5rem;border:1px solid #e6eef7;border-radius:8px}
+    button.btn{background:var(--accent);color:#fff;padding:.55rem .9rem;border-radius:8px;border:0;font-weight:600}
+    .muted{color:var(--muted)}
+  </style>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar-fixed">
+    <div class="topbar">
+      <a class="brand" href="/"><span class="mark">S</span> <span class="brand-text">SimTk</span></a>
+      <nav class="topnav">
+        <a href="/">Home</a>
+        <a href="features.html">Features</a>
+        <a href="community.html">Community</a>
+        <a href="aws_reels.html" class="stem-cta">STEM</a>
+        <a href="about.html">About</a>
+      </nav>
+      <a class="cta" href="video.html">Upload Reels</a>
+    </div>
+  </header>
+  <div style="height:64px" aria-hidden="true"></div>
+  <main>
+    <h1>Features</h1>
+    <p>High-impact features designed to attract investors, teachers, and students.</p>
+
+    <div class="feature-cta" id="feature-cta">
+      <h3>Interested in SimTk?</h3>
+      <p class="muted">Join the waitlist to support better STEM learning — tell us your role so we can connect with relevant pilots and updates.</p>
+      <form id="interest-form">
+        <div class="form-row">
+          <input name="name" placeholder="Your name (optional)" />
+          <input name="email" placeholder="Email (required)" required />
+        </div>
+        <div class="form-row">
+          <select name="role" required>
+            <option value="">Select role*</option>
+            <option>Teacher</option>
+            <option>Student</option>
+            <option>Educator / Researcher</option>
+            <option>Parent / Mentor</option>
+            <option>Other</option>
+          </select>
+          <button class="btn" type="submit">Join the list</button>
+        </div>
+        <div style="margin-top:.5rem">
+          <textarea name="message" placeholder="Short note about interest (optional)"></textarea>
+        </div>
+        <div id="interest-status" style="margin-top:.5rem;color:var(--muted)"></div>
+      </form>
+    </div>
+
+    <section style="margin-top:1rem">
+      <h2><span class="icon">💡</span>Highlights</h2>
+      <ul>
+        <li><strong>Shareable Simulation Reels</strong>: short interactive simulations crafted for classroom use, demonstrations, and student projects.</li>
+        <li><strong>Impact & Learning Signals</strong>: aggregated engagement and outcome metrics that help teachers refine lessons and schools measure learning progress.</li>
+        <li><strong>Accessible & Privacy-First</strong>: private classroom groups, role-based controls, and streaming-first delivery to protect student data while enabling collaboration.</li>
+      </ul>
+    </section>
+
+    <section style="margin-top:1rem">
+      <h2><span class="icon">🏫</span>For Teachers</h2>
+      <ul>
+        <li><strong>Private Classroom Groups</strong>: share reels, assignments, and comment threads with student privacy controls.</li>
+        <li><strong>Lesson Builder</strong>: drag-and-drop simulation steps that export lesson plans and standards-mapped activities.</li>
+        <li><strong>Assessment & Insights</strong>: inline quizzes, rubric attachments, and classroom analytics to track progress.</li>
+        <li><strong>Curriculum Versioning</strong>: fork, improve, and cite lesson versions for reproducibility.</li>
+      </ul>
+    </section>
+
+    <section style="margin-top:1rem">
+      <h2><span class="icon">🎓</span>For Students</h2>
+      <ul>
+        <li><strong>Short Guided Reels</strong>: snackable, interactive simulations with step-by-step hints and checkpoints.</li>
+        <li><strong>Project Portfolios</strong>: students collect reels and notes into shareable portfolios for mentors and applications.</li>
+        <li><strong>Mentor Matching</strong>: micro-mentorship sessions and office-hours booking integrated into groups.</li>
+      </ul>
+    </section>
+
+    <section style="margin-top:1rem">
+      <h2><span class="icon">🔧</span>Core Platform</h2>
+      <ul>
+        <li>End-to-end privacy controls and role-based access (student, teacher, admin).</li>
+        <li>Secure media hosting with streaming endpoints (no direct download links exposed).</li>
+        <li>Extensible plugin API for assessments, analytics, and LMS integrations (LTI/Canvas).</li>
+        <li>Searchable library with tagging, standards mapping (NGSS), and peer review badges.</li>
+      </ul>
+    </section>
+
+    <section style="margin-top:1rem">
+      <h2>Roadmap & Quick Wins</h2>
+      <ul>
+        <li>Quarter 1: Private groups, upload + reels UX, and basic analytics.</li>
+        <li>Quarter 2: Lesson Builder, assessment blocks, and mentor matching MVP.</li>
+        <li>Quarter 3: Marketplace pilot, institutional reporting, and LTI integration.</li>
+      </ul>
+    </section>
+  </main>
+  <footer style="margin-top:1.25rem;text-align:center;color:#6b7280;padding:1rem 0;background:linear-gradient(180deg,rgba(0,0,0,0.01),transparent)">
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="about.html">About</a>
+      <a href="vision.html">Vision</a>
+      <a href="references.html">References</a>
+    </div>
+    <div style="margin-top:.5rem">© SimTk</div>
+  </footer>
+  <script>
+    (function(){
+      try{
+        const path = location.pathname.replace(/\/index\.html$/,'/');
+        document.querySelectorAll('.topnav a').forEach(a=>{
+          try{
+            const href = new URL(a.href, location.href).pathname.replace(/\/$/,'');
+            const cur = path.replace(/\/$/,'');
+            if(href === cur || (href === '/features.html' && cur === '/features.html') || (href === '/' && (cur === '' || cur === '/'))){
+              a.classList.add('active');
+            }
+          }catch(e){}
+        });
+      }catch(e){}
+    })();
+  </script>
+  <script>
+    (function(){
+      const form = document.getElementById('interest-form');
+      if (!form) return;
+      const statusEl = document.getElementById('interest-status');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.textContent = 'Sending...';
+        const data = {
+          name: form.name.value || '',
+          email: form.email.value || '',
+          role: form.role.value || '',
+          message: form.message.value || ''
+        };
+        try {
+          const res = await fetch('/interest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          const json = await res.json();
+          if (res.ok && json && json.ok) {
+            statusEl.textContent = 'Thanks — we saved your request.';
+            form.reset();
+          } else {
+            statusEl.textContent = (json && json.error) ? json.error : 'Failed to submit';
+          }
+        } catch (err) {
+          statusEl.textContent = 'Network error';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
